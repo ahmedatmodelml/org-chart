@@ -1084,6 +1084,13 @@
         let allExpanded = false;
         const expandBtn = document.getElementById('expandAll');
         
+        function resetLines(container) {
+            container.querySelectorAll('.children').forEach(children => {
+                children.style.setProperty('--line-width', '0px');
+                children.style.setProperty('--line-left', '50%');
+            });
+        }
+        
         document.getElementById('expandAll').addEventListener('click', () => {
             allExpanded = !allExpanded;
             const teams = document.querySelectorAll('.team');
@@ -1103,6 +1110,7 @@
                     children.classList.remove('collapsed');
                 } else {
                     children.classList.add('collapsed');
+                    resetLines(children);
                 }
             });
             
@@ -1114,6 +1122,9 @@
             expandBtn.title = allExpanded ? 'Collapse all' : 'Expand all';
             
             if (allExpanded) {
+                setTimeout(updateAllLines, 50);
+            } else {
+                // Reset top-level lines too
                 setTimeout(updateAllLines, 50);
             }
         });
@@ -1297,6 +1308,9 @@
                     teamEl.classList.remove('expanded');
                     connector.style.display = 'none';
                     children.classList.add('collapsed');
+                    // Reset lines in collapsed section
+                    resetLines(children);
+                    setTimeout(updateAllLines, 50);
                 } else {
                     teamEl.classList.add('expanded');
                     connector.style.display = 'block';
