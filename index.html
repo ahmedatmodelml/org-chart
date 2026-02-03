@@ -56,30 +56,11 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 8px;
         }
 
-        .logo-icon {
-            width: 22px;
-            height: 22px;
-            background: var(--slate-900);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .logo-icon svg {
-            width: 12px;
-            height: 12px;
-            fill: var(--white);
-        }
-
-        .logo-text {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--slate-900);
+        .logo-img {
+            height: 28px;
+            width: auto;
         }
 
         h1 {
@@ -508,18 +489,8 @@
                 padding: 16px 32px;
             }
 
-            .logo-icon {
-                width: 30px;
-                height: 30px;
-            }
-
-            .logo-icon svg {
-                width: 16px;
-                height: 16px;
-            }
-
-            .logo-text {
-                font-size: 17px;
+            .logo-img {
+                height: 34px;
             }
 
             h1 {
@@ -667,13 +638,8 @@
                 padding: 6px 12px;
             }
 
-            .logo-icon {
-                width: 20px;
-                height: 20px;
-            }
-
-            .logo-text {
-                font-size: 12px;
+            .logo-img {
+                height: 24px;
             }
 
             .canvas {
@@ -701,14 +667,7 @@
 <body>
     <div class="header">
         <div class="logo">
-            <div class="logo-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor"/>
-                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </div>
-            <span class="logo-text">Model ML</span>
+            <img src="logo.png" alt="Model ML" class="logo-img">
         </div>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search name..." autocomplete="off">
