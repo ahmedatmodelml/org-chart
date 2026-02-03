@@ -90,6 +90,85 @@
             display: none;
         }
 
+        .search-container {
+            position: relative;
+        }
+
+        #searchInput {
+            padding: 6px 10px;
+            border: 1px solid var(--slate-200);
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: inherit;
+            width: 140px;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+
+        #searchInput:focus {
+            border-color: var(--slate-400);
+            box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.2);
+        }
+
+        #searchInput::placeholder {
+            color: var(--slate-400);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: 6px;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 200;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result {
+            padding: 8px 10px;
+            cursor: pointer;
+            font-size: 11px;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .search-result:last-child {
+            border-bottom: none;
+        }
+
+        .search-result:hover {
+            background: var(--slate-50);
+        }
+
+        .search-result .result-name {
+            font-weight: 600;
+            color: var(--slate-900);
+        }
+
+        .search-result .result-role {
+            color: var(--slate-500);
+            font-size: 10px;
+            margin-top: 1px;
+        }
+
+        .person.highlighted {
+            border-color: var(--blue-500);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        .person.highlighted .name {
+            color: var(--blue-600);
+        }
+
         .canvas-container {
             width: 100vw;
             height: 100vh;
@@ -600,7 +679,10 @@
             </div>
             <span class="logo-text">Model ML</span>
         </div>
-        <h1>Team Org Chart</h1>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search name..." autocomplete="off">
+            <div class="search-results" id="searchResults"></div>
+        </div>
     </div>
     
     <div class="legend">
@@ -1316,6 +1398,149 @@
         window.addEventListener('resize', () => {
             updateAllLines();
         });
+
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        let allPeople = [];
+
+        // Collect all people from org data
+        function collectPeople(obj, path = []) {
+            if (obj.name && obj.role) {
+                allPeople.push({ name: obj.name, role: obj.role, path: [...path, obj.name] });
+            }
+            if (obj.staff) obj.staff.forEach(s => collectPeople(s, [...path, obj.name]));
+            if (obj.reports) obj.reports.forEach(r => collectPeople(r, [...path, obj.name]));
+            if (obj.teams) obj.teams.forEach(t => {
+                if (t.head) collectPeople(t.head, [...path, obj.name, t.name]);
+                if (t.members) t.members.forEach(m => collectPeople(m, [...path, obj.name, t.name]));
+            });
+        }
+        collectPeople(orgData);
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query.length === 0) {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            const matches = allPeople.filter(p => 
+                p.name.toLowerCase().includes(query)
+            ).slice(0, 8);
+
+            if (matches.length === 0) {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            searchResults.innerHTML = matches.map(p => `
+                <div class="search-result" data-name="${p.name}">
+                    <div class="result-name">${p.name}</div>
+                    <div class="result-role">${p.role}</div>
+                </div>
+            `).join('');
+            searchResults.classList.add('active');
+        });
+
+        searchResults.addEventListener('click', (e) => {
+            const result = e.target.closest('.search-result');
+            if (!result) return;
+            
+            const name = result.dataset.name;
+            searchInput.value = name;
+            searchResults.classList.remove('active');
+            highlightAndScrollTo(name);
+        });
+
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const firstResult = searchResults.querySelector('.search-result');
+                if (firstResult) {
+                    const name = firstResult.dataset.name;
+                    searchInput.value = name;
+                    searchResults.classList.remove('active');
+                    highlightAndScrollTo(name);
+                }
+            } else if (e.key === 'Escape') {
+                searchResults.classList.remove('active');
+                searchInput.blur();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchResults.classList.remove('active');
+            }
+        });
+
+        function highlightAndScrollTo(name) {
+            // Remove previous highlight
+            document.querySelectorAll('.person.highlighted').forEach(el => {
+                el.classList.remove('highlighted');
+            });
+
+            // Find and expand path to person
+            const personNodes = document.querySelectorAll('.person');
+            let targetNode = null;
+
+            personNodes.forEach(node => {
+                const nameEl = node.querySelector('.name');
+                if (nameEl && nameEl.textContent === name) {
+                    targetNode = node;
+                }
+            });
+
+            if (!targetNode) {
+                // Person might be in collapsed team - expand all first
+                document.getElementById('expandAll').click();
+                if (!allExpanded) {
+                    document.getElementById('expandAll').click();
+                }
+                
+                setTimeout(() => {
+                    personNodes.forEach(node => {
+                        const nameEl = node.querySelector('.name');
+                        if (nameEl && nameEl.textContent === name) {
+                            targetNode = node;
+                        }
+                    });
+                    if (targetNode) doHighlight(targetNode);
+                }, 100);
+            } else {
+                // Check if any parent is collapsed
+                let parent = targetNode.closest('.team-children.collapsed');
+                if (parent) {
+                    document.getElementById('expandAll').click();
+                    if (!allExpanded) {
+                        document.getElementById('expandAll').click();
+                    }
+                    setTimeout(() => doHighlight(targetNode), 100);
+                } else {
+                    doHighlight(targetNode);
+                }
+            }
+        }
+
+        function doHighlight(targetNode) {
+            targetNode.classList.add('highlighted');
+
+            // Pan to center the node
+            const rect = targetNode.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            const nodeX = (rect.left + rect.width / 2 - containerRect.left - panX) / scale;
+            const nodeY = (rect.top + rect.height / 2 - containerRect.top - panY) / scale;
+            
+            const centerX = containerRect.width / 2;
+            const centerY = containerRect.height / 2;
+            
+            panX = centerX - nodeX * scale;
+            panY = centerY - nodeY * scale;
+            
+            updateTransform();
+        }
     </script>
 </body>
 </html>
