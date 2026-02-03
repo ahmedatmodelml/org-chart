@@ -167,26 +167,26 @@
 
         .canvas {
             transform-origin: 0 0;
-            padding: 60px 20px 20px 20px;
-            display: inline-flex;
-            justify-content: center;
+            padding: 80px 40px 40px 40px;
+            display: flex;
+            justify-content: flex-start;
             min-width: 100vw;
             min-height: 100vh;
             min-height: 100dvh;
         }
 
         .org-chart {
-            display: inline-flex;
+            display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             padding-bottom: 60px;
             transition: all 0.4s ease;
         }
 
         .node {
-            display: inline-flex;
+            display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: flex-start;
             transition: all 0.4s ease;
         }
 
@@ -256,9 +256,9 @@
         .team::after {
             content: '+';
             position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
             background: var(--white);
             color: var(--slate-900);
             width: 20px;
@@ -294,20 +294,16 @@
         }
 
         .connector {
-            width: 1px;
-            height: 24px;
-            background: var(--slate-300);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+            display: none;
         }
 
         .children {
-            display: inline-flex;
-            gap: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
             position: relative;
-            padding-top: 24px;
+            padding-left: 32px;
             transition: all 0.4s ease;
-            justify-content: center;
         }
 
         .children.collapsed {
@@ -318,22 +314,34 @@
             content: '';
             position: absolute;
             top: 0;
-            height: 1px;
+            bottom: 20px;
+            left: 15px;
+            width: 1px;
+            height: auto;
             background: var(--slate-300);
-            left: var(--line-left, 50%);
-            width: var(--line-width, 0);
-            transition: all 0.3s ease;
         }
 
         .child-branch {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            position: relative;
+            padding: 8px 0;
             transition: all 0.4s ease;
         }
 
+        .child-branch::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: -17px;
+            width: 17px;
+            height: 1px;
+            background: var(--slate-300);
+        }
+
         .child-branch > .connector {
-            height: 24px;
+            display: none;
         }
 
         /* Dotted line for staff roles */
@@ -497,7 +505,7 @@
                 height: 24px;
                 font-size: 16px;
                 line-height: 22px;
-                bottom: -12px;
+                right: -12px;
             }
 
             .team .name {
@@ -509,17 +517,17 @@
                 margin-top: 4px;
             }
 
-            .connector {
-                height: 32px;
-            }
-
             .children {
-                gap: 24px;
-                padding-top: 32px;
+                padding-left: 40px;
             }
 
-            .child-branch > .connector {
-                height: 32px;
+            .children::before {
+                left: 19px;
+            }
+
+            .child-branch::before {
+                left: -21px;
+                width: 21px;
             }
 
             .controls {
@@ -593,7 +601,16 @@
             }
 
             .children {
-                gap: 10px;
+                padding-left: 24px;
+            }
+
+            .children::before {
+                left: 11px;
+            }
+
+            .child-branch::before {
+                left: -13px;
+                width: 13px;
             }
 
             .legend {
