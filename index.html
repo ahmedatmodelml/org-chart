@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Team Org Chart | Model ML</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,8 +33,10 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--slate-50);
             min-height: 100vh;
+            min-height: 100dvh;
             color: var(--slate-900);
             overflow: hidden;
+            touch-action: none;
         }
 
         .header {
@@ -45,7 +47,7 @@
             z-index: 100;
             background: var(--white);
             border-bottom: 1px solid var(--slate-200);
-            padding: 16px 32px;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -54,41 +56,44 @@
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .logo-icon {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             background: var(--slate-900);
-            border-radius: 8px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;
         }
 
         .logo-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             fill: var(--white);
         }
 
         .logo-text {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
             color: var(--slate-900);
         }
 
         h1 {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--slate-600);
             letter-spacing: -0.01em;
+            display: none;
         }
 
         .canvas-container {
             width: 100vw;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
             cursor: grab;
             background: 
@@ -102,11 +107,12 @@
 
         .canvas {
             transform-origin: 0 0;
-            padding: 120px 50px 50px 50px;
+            padding: 80px 30px 30px 30px;
             display: inline-flex;
             justify-content: center;
             min-width: 100vw;
             min-height: 100vh;
+            min-height: 100dvh;
         }
 
         .org-chart {
@@ -127,9 +133,9 @@
         .person {
             background: var(--white);
             border: 1px solid var(--slate-200);
-            border-radius: 12px;
-            padding: 20px 28px;
-            min-width: 140px;
+            border-radius: 10px;
+            padding: 14px 18px;
+            min-width: 100px;
             text-align: center;
             position: relative;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -143,16 +149,16 @@
         }
 
         .person .name {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--slate-900);
             letter-spacing: -0.01em;
         }
 
         .person .role {
-            font-size: 12px;
+            font-size: 10px;
             color: var(--slate-500);
-            margin-top: 4px;
+            margin-top: 3px;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.03em;
@@ -162,20 +168,25 @@
         .team {
             background: var(--slate-900);
             border: 1px solid var(--slate-800);
-            border-radius: 12px;
-            padding: 20px 32px;
-            min-width: 180px;
+            border-radius: 10px;
+            padding: 14px 22px;
+            min-width: 140px;
             text-align: center;
             cursor: pointer;
             position: relative;
             box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
             user-select: none;
             transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .team:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);
+        }
+
+        .team:active {
+            transform: scale(0.98);
         }
 
         .team.expanded {
@@ -185,16 +196,16 @@
         .team::after {
             content: '+';
             position: absolute;
-            bottom: -12px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--white);
             color: var(--slate-900);
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            font-size: 16px;
-            line-height: 22px;
+            font-size: 14px;
+            line-height: 18px;
             font-weight: 600;
             transition: all 0.2s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -205,16 +216,16 @@
         }
 
         .team .name {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--white);
             letter-spacing: -0.01em;
         }
 
         .team .count {
-            font-size: 12px;
+            font-size: 10px;
             color: var(--slate-400);
-            margin-top: 6px;
+            margin-top: 4px;
             font-weight: 500;
         }
 
@@ -224,7 +235,7 @@
 
         .connector {
             width: 1px;
-            height: 32px;
+            height: 24px;
             background: var(--slate-300);
             transition: all 0.3s ease;
             flex-shrink: 0;
@@ -232,9 +243,9 @@
 
         .children {
             display: inline-flex;
-            gap: 24px;
+            gap: 12px;
             position: relative;
-            padding-top: 32px;
+            padding-top: 24px;
             transition: all 0.4s ease;
             justify-content: center;
         }
@@ -262,31 +273,32 @@
         }
 
         .child-branch > .connector {
-            height: 32px;
+            height: 24px;
         }
 
         /* Controls */
         .controls {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: 20px;
+            right: 16px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
             z-index: 100;
         }
 
         .controls button {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border: 1px solid var(--slate-200);
-            border-radius: 10px;
+            border-radius: 12px;
             background: var(--white);
             color: var(--slate-700);
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            -webkit-tap-highlight-color: transparent;
         }
 
         .controls button:hover {
@@ -295,36 +307,37 @@
         }
 
         .controls button:active {
-            transform: scale(0.96);
+            transform: scale(0.94);
+            background: var(--slate-100);
         }
 
         .zoom-level {
             text-align: center;
-            font-size: 11px;
-            font-weight: 500;
+            font-size: 10px;
+            font-weight: 600;
             color: var(--slate-500);
-            padding: 4px 0;
+            padding: 2px 0;
         }
 
         .legend {
             position: fixed;
-            bottom: 24px;
-            left: 24px;
+            bottom: 20px;
+            left: 16px;
             background: var(--white);
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 11px;
             color: var(--slate-500);
             z-index: 100;
             border: 1px solid var(--slate-200);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .legend div {
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .legend div:last-child {
@@ -333,17 +346,18 @@
 
         .legend kbd {
             background: var(--slate-100);
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
-            font-size: 11px;
+            font-size: 9px;
             font-family: inherit;
             color: var(--slate-600);
+            font-weight: 500;
         }
 
         @keyframes nodeAppear {
             from {
                 opacity: 0;
-                transform: translateY(-16px) scale(0.95);
+                transform: translateY(-12px) scale(0.95);
             }
             to {
                 opacity: 1;
@@ -361,6 +375,201 @@
         .team-children:not(.collapsed) > .child-branch:nth-child(4) { animation-delay: 0.08s; }
         .team-children:not(.collapsed) > .child-branch:nth-child(5) { animation-delay: 0.10s; }
         .team-children:not(.collapsed) > .child-branch:nth-child(6) { animation-delay: 0.12s; }
+
+        /* Tablet and up */
+        @media (min-width: 768px) {
+            .header {
+                padding: 16px 32px;
+            }
+
+            .logo-icon {
+                width: 32px;
+                height: 32px;
+            }
+
+            .logo-icon svg {
+                width: 20px;
+                height: 20px;
+            }
+
+            .logo-text {
+                font-size: 18px;
+            }
+
+            h1 {
+                display: block;
+                font-size: 16px;
+            }
+
+            .canvas {
+                padding: 120px 50px 50px 50px;
+            }
+
+            .person {
+                padding: 20px 28px;
+                min-width: 140px;
+                border-radius: 12px;
+            }
+
+            .person .name {
+                font-size: 15px;
+            }
+
+            .person .role {
+                font-size: 12px;
+                margin-top: 4px;
+            }
+
+            .team {
+                padding: 20px 32px;
+                min-width: 180px;
+                border-radius: 12px;
+            }
+
+            .team::after {
+                width: 24px;
+                height: 24px;
+                font-size: 16px;
+                line-height: 22px;
+                bottom: -12px;
+            }
+
+            .team .name {
+                font-size: 14px;
+            }
+
+            .team .count {
+                font-size: 12px;
+                margin-top: 6px;
+            }
+
+            .connector {
+                height: 32px;
+            }
+
+            .children {
+                gap: 24px;
+                padding-top: 32px;
+            }
+
+            .child-branch > .connector {
+                height: 32px;
+            }
+
+            .controls {
+                bottom: 24px;
+                right: 24px;
+                gap: 8px;
+            }
+
+            .controls button {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                border-radius: 10px;
+            }
+
+            .zoom-level {
+                font-size: 11px;
+            }
+
+            .legend {
+                bottom: 24px;
+                left: 24px;
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+
+            .legend kbd {
+                font-size: 11px;
+                padding: 2px 6px;
+            }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .header {
+                justify-content: space-between;
+            }
+
+            .header::after {
+                content: '';
+                width: 120px;
+            }
+        }
+
+        /* Small phones */
+        @media (max-width: 374px) {
+            .person {
+                padding: 10px 12px;
+                min-width: 80px;
+            }
+
+            .person .name {
+                font-size: 11px;
+            }
+
+            .person .role {
+                font-size: 9px;
+            }
+
+            .team {
+                padding: 12px 16px;
+                min-width: 110px;
+            }
+
+            .team .name {
+                font-size: 11px;
+            }
+
+            .team .count {
+                font-size: 9px;
+            }
+
+            .children {
+                gap: 8px;
+            }
+
+            .legend {
+                display: none;
+            }
+        }
+
+        /* Landscape mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .header {
+                padding: 8px 16px;
+            }
+
+            .logo-icon {
+                width: 24px;
+                height: 24px;
+            }
+
+            .logo-text {
+                font-size: 14px;
+            }
+
+            .canvas {
+                padding-top: 60px;
+            }
+
+            .legend {
+                bottom: 12px;
+                left: 12px;
+                padding: 8px 12px;
+            }
+
+            .controls {
+                bottom: 12px;
+                right: 12px;
+            }
+
+            .controls button {
+                width: 36px;
+                height: 36px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -376,20 +585,19 @@
             <span class="logo-text">Model ML</span>
         </div>
         <h1>Team Org Chart</h1>
-        <div style="width: 120px;"></div>
     </div>
     
     <div class="legend">
-        <div><kbd>Click +</kbd> Expand team</div>
-        <div><kbd>Scroll</kbd> Zoom</div>
+        <div><kbd>Tap +</kbd> Expand</div>
+        <div><kbd>Pinch</kbd> Zoom</div>
         <div><kbd>Drag</kbd> Pan</div>
     </div>
 
     <div class="controls">
-        <button id="zoomIn">+</button>
+        <button id="zoomIn" aria-label="Zoom in">+</button>
         <div class="zoom-level" id="zoomLevel">100%</div>
-        <button id="zoomOut">−</button>
-        <button id="resetView">⌂</button>
+        <button id="zoomOut" aria-label="Zoom out">−</button>
+        <button id="resetView" aria-label="Reset view">⌂</button>
     </div>
 
     <div class="canvas-container" id="container">
@@ -517,6 +725,18 @@
         const canvas = document.getElementById('canvas');
         const zoomLevelDisplay = document.getElementById('zoomLevel');
 
+        // Set initial scale based on screen size
+        function setInitialScale() {
+            if (window.innerWidth < 768) {
+                scale = 0.7;
+            } else if (window.innerWidth < 1024) {
+                scale = 0.85;
+            } else {
+                scale = 1;
+            }
+            updateTransform();
+        }
+
         function updateTransform() {
             canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
             zoomLevelDisplay.textContent = `${Math.round(scale * 100)}%`;
@@ -526,7 +746,7 @@
         container.addEventListener('wheel', (e) => {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.92 : 1.08;
-            const newScale = Math.min(Math.max(scale * delta, 0.15), 3);
+            const newScale = Math.min(Math.max(scale * delta, 0.1), 3);
             
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -562,9 +782,12 @@
         let lastTouchDist = 0;
         let lastTouchX = 0;
         let lastTouchY = 0;
+        let touchStartTime = 0;
 
         container.addEventListener('touchstart', (e) => {
+            touchStartTime = Date.now();
             if (e.touches.length === 1) {
+                if (e.target.closest('.team')) return;
                 isDragging = true;
                 startX = e.touches[0].clientX - panX;
                 startY = e.touches[0].clientY - panY;
@@ -577,21 +800,22 @@
                 lastTouchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
                 lastTouchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
             }
-        }, { passive: false });
+        }, { passive: true });
 
         container.addEventListener('touchmove', (e) => {
-            e.preventDefault();
             if (e.touches.length === 1 && isDragging) {
+                e.preventDefault();
                 panX = e.touches[0].clientX - startX;
                 panY = e.touches[0].clientY - startY;
                 updateTransform();
             } else if (e.touches.length === 2) {
+                e.preventDefault();
                 const dist = Math.hypot(
                     e.touches[0].clientX - e.touches[1].clientX,
                     e.touches[0].clientY - e.touches[1].clientY
                 );
                 const delta = dist / lastTouchDist;
-                const newScale = Math.min(Math.max(scale * delta, 0.15), 3);
+                const newScale = Math.min(Math.max(scale * delta, 0.1), 3);
                 
                 const touchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
                 const touchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
@@ -614,17 +838,17 @@
 
         // Button controls
         document.getElementById('zoomIn').addEventListener('click', () => {
-            scale = Math.min(scale * 1.15, 3);
+            scale = Math.min(scale * 1.2, 3);
             updateTransform();
         });
 
         document.getElementById('zoomOut').addEventListener('click', () => {
-            scale = Math.max(scale * 0.85, 0.15);
+            scale = Math.max(scale * 0.8, 0.1);
             updateTransform();
         });
 
         document.getElementById('resetView').addEventListener('click', () => {
-            scale = 1;
+            setInitialScale();
             panX = 0;
             panY = 0;
             updateTransform();
@@ -848,6 +1072,14 @@
         // Build the chart
         const chart = document.getElementById('orgChart');
         chart.appendChild(createRootNode(orgData));
+
+        // Set initial scale on load
+        setInitialScale();
+
+        // Update on resize
+        window.addEventListener('resize', () => {
+            updateAllLines();
+        });
     </script>
 </body>
 </html>
