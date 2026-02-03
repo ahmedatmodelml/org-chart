@@ -48,23 +48,25 @@
         .canvas {
             transform-origin: 0 0;
             padding: 100px 50px 50px 50px;
+            display: inline-flex;
+            justify-content: center;
             min-width: 100vw;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
         }
 
         .org-chart {
-            display: flex;
+            display: inline-flex;
             flex-direction: column;
             align-items: center;
             padding-bottom: 60px;
+            transition: all 0.4s ease;
         }
 
         .node {
-            display: flex;
+            display: inline-flex;
             flex-direction: column;
             align-items: center;
+            transition: all 0.4s ease;
         }
 
         .person {
@@ -77,11 +79,11 @@
             position: relative;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             user-select: none;
+            transition: all 0.3s ease;
         }
 
         .person.clickable {
             cursor: pointer;
-            transition: all 0.3s ease;
         }
 
         .person.clickable:hover {
@@ -211,22 +213,20 @@
             height: 30px;
             background: #3d3d5c;
             transition: all 0.3s ease;
+            flex-shrink: 0;
         }
 
         .children {
-            display: flex;
+            display: inline-flex;
             gap: 20px;
             position: relative;
             padding-top: 30px;
-            overflow: hidden;
-            max-height: 0;
-            opacity: 0;
             transition: all 0.4s ease;
+            justify-content: center;
         }
 
-        .children.visible {
-            max-height: 4000px;
-            opacity: 1;
+        .children.collapsed {
+            display: none;
         }
 
         .children::before {
@@ -241,9 +241,10 @@
         }
 
         .child-branch {
-            display: flex;
+            display: inline-flex;
             flex-direction: column;
             align-items: center;
+            transition: all 0.4s ease;
         }
 
         .child-branch > .connector {
@@ -319,24 +320,24 @@
         @keyframes nodeAppear {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(-20px) scale(0.9);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
-        .children.visible > .child-branch {
+        .children:not(.collapsed) > .child-branch {
             animation: nodeAppear 0.3s ease forwards;
         }
 
-        .children.visible > .child-branch:nth-child(1) { animation-delay: 0.05s; }
-        .children.visible > .child-branch:nth-child(2) { animation-delay: 0.1s; }
-        .children.visible > .child-branch:nth-child(3) { animation-delay: 0.15s; }
-        .children.visible > .child-branch:nth-child(4) { animation-delay: 0.2s; }
-        .children.visible > .child-branch:nth-child(5) { animation-delay: 0.25s; }
-        .children.visible > .child-branch:nth-child(6) { animation-delay: 0.3s; }
+        .children:not(.collapsed) > .child-branch:nth-child(1) { animation-delay: 0.05s; }
+        .children:not(.collapsed) > .child-branch:nth-child(2) { animation-delay: 0.1s; }
+        .children:not(.collapsed) > .child-branch:nth-child(3) { animation-delay: 0.15s; }
+        .children:not(.collapsed) > .child-branch:nth-child(4) { animation-delay: 0.2s; }
+        .children:not(.collapsed) > .child-branch:nth-child(5) { animation-delay: 0.25s; }
+        .children:not(.collapsed) > .child-branch:nth-child(6) { animation-delay: 0.3s; }
     </style>
 </head>
 <body>
@@ -491,7 +492,6 @@
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
             const newScale = Math.min(Math.max(scale * delta, 0.2), 3);
             
-            // Zoom toward cursor
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
@@ -615,7 +615,7 @@
         }
 
         function updateHorizontalLine(children) {
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 const branches = Array.from(children.querySelectorAll(':scope > .child-branch'));
                 if (branches.length > 1) {
                     const firstCenter = branches[0].offsetLeft + branches[0].offsetWidth / 2;
@@ -626,7 +626,11 @@
                     children.style.setProperty('--line-left', '50%');
                     children.style.setProperty('--line-width', '0px');
                 }
-            }, 50);
+            });
+        }
+
+        function updateAllLines() {
+            document.querySelectorAll('.children:not(.collapsed)').forEach(updateHorizontalLine);
         }
 
         function createPersonNode(person) {
@@ -669,7 +673,7 @@
                 node.appendChild(connector);
 
                 const children = document.createElement('div');
-                children.className = 'children';
+                children.className = 'children collapsed';
 
                 person.reports.forEach(report => {
                     const branch = document.createElement('div');
@@ -693,8 +697,9 @@
                     if (isExpanded) {
                         personEl.classList.remove('expanded');
                         connector.style.display = 'none';
-                        children.classList.remove('visible');
+                        children.classList.add('collapsed');
                         
+                        // Collapse all descendants
                         children.querySelectorAll('.person.expanded, .team.expanded').forEach(p => {
                             p.classList.remove('expanded');
                         });
@@ -702,14 +707,17 @@
                             c.style.display = 'none';
                         });
                         children.querySelectorAll('.children').forEach(c => {
-                            c.classList.remove('visible');
+                            c.classList.add('collapsed');
                         });
                     } else {
                         personEl.classList.add('expanded');
                         connector.style.display = 'block';
-                        children.classList.add('visible');
+                        children.classList.remove('collapsed');
                         updateHorizontalLine(children);
                     }
+                    
+                    // Update all visible lines after layout change
+                    setTimeout(updateAllLines, 350);
                 });
             }
 
@@ -742,7 +750,7 @@
             node.appendChild(connector);
 
             const children = document.createElement('div');
-            children.className = 'children';
+            children.className = 'children collapsed';
 
             if (team.head) {
                 const branch = document.createElement('div');
@@ -779,7 +787,7 @@
                 if (isExpanded) {
                     teamEl.classList.remove('expanded');
                     connector.style.display = 'none';
-                    children.classList.remove('visible');
+                    children.classList.add('collapsed');
                     
                     children.querySelectorAll('.person.expanded, .team.expanded').forEach(p => {
                         p.classList.remove('expanded');
@@ -788,14 +796,16 @@
                         c.style.display = 'none';
                     });
                     children.querySelectorAll('.children').forEach(c => {
-                        c.classList.remove('visible');
+                        c.classList.add('collapsed');
                     });
                 } else {
                     teamEl.classList.add('expanded');
                     connector.style.display = 'block';
-                    children.classList.add('visible');
+                    children.classList.remove('collapsed');
                     updateHorizontalLine(children);
                 }
+                
+                setTimeout(updateAllLines, 350);
             });
 
             return node;
@@ -826,7 +836,7 @@
                 node.appendChild(connector);
 
                 const children = document.createElement('div');
-                children.className = 'children visible';
+                children.className = 'children';
 
                 data.teams.forEach(team => {
                     const branch = document.createElement('div');
