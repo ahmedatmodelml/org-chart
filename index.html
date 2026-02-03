@@ -183,37 +183,6 @@
             transition: all 0.4s ease;
         }
 
-        .top-pair {
-            display: flex;
-            align-items: flex-start;
-            gap: 16px;
-        }
-
-        .top-pair .connector-horizontal {
-            width: 24px;
-            height: 1px;
-            background: none;
-            border-top: 1px dashed var(--slate-400);
-            margin-top: 28px;
-            flex-shrink: 0;
-        }
-
-        .top-pair .staff-node {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        @media (min-width: 768px) {
-            .top-pair {
-                gap: 24px;
-            }
-            .top-pair .connector-horizontal {
-                width: 40px;
-                margin-top: 36px;
-            }
-        }
-
         .node {
             display: inline-flex;
             flex-direction: column;
@@ -700,37 +669,6 @@
         const orgData = {
             name: 'Chaz',
             role: 'CEO',
-            staff: [
-                {
-                    name: 'Nat',
-                    role: 'Chief of Staff',
-                    dotted: true,
-                    teams: [
-                        {
-                            name: 'Ops',
-                            members: [
-                                { name: 'Ahmed', role: 'Special Projects', reports: [] },
-                                { name: 'John', role: 'Relationship Manager', reports: [] },
-                                { name: 'Jill', role: 'EA / NY Office Manager', reports: [] },
-                                { name: 'Lucy', role: 'EA / UK Office Manager', reports: [] },
-                                { name: 'Grace', role: 'Chaz PA', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Finance',
-                            members: [
-                                { name: 'Harun', role: 'Finance', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Legal',
-                            members: [
-                                { name: 'Eli', role: 'Legal', reports: [] }
-                            ]
-                        }
-                    ]
-                }
-            ],
             teams: [
                 {
                     name: 'Data',
@@ -919,6 +857,34 @@
                                     }
                                 ]
                             }
+                        }
+                    ]
+                },
+                {
+                    name: 'Nat',
+                    role: 'Chief of Staff',
+                    teams: [
+                        {
+                            name: 'Ops',
+                            members: [
+                                { name: 'Ahmed', role: 'Special Projects', reports: [] },
+                                { name: 'John', role: 'Relationship Manager', reports: [] },
+                                { name: 'Jill', role: 'EA / NY Office Manager', reports: [] },
+                                { name: 'Lucy', role: 'EA / UK Office Manager', reports: [] },
+                                { name: 'Grace', role: 'Chaz PA', reports: [] }
+                            ]
+                        },
+                        {
+                            name: 'Finance',
+                            members: [
+                                { name: 'Harun', role: 'Finance', reports: [] }
+                            ]
+                        },
+                        {
+                            name: 'Legal',
+                            members: [
+                                { name: 'Eli', role: 'Legal', reports: [] }
+                            ]
                         }
                     ]
                 }
@@ -1310,199 +1276,70 @@
         }
 
         function createRootNode(data) {
-            const wrapper = document.createElement('div');
-            wrapper.className = 'node';
+            const node = document.createElement('div');
+            node.className = 'node';
 
-            // Check if we have staff to put on the right
-            const hasStaff = data.staff && data.staff.length > 0;
+            const personEl = document.createElement('div');
+            personEl.className = 'person';
 
-            if (hasStaff) {
-                // Create top pair: CEO + Chief of Staff side by side
-                const topPair = document.createElement('div');
-                topPair.className = 'top-pair';
+            const nameEl = document.createElement('div');
+            nameEl.className = 'name';
+            nameEl.textContent = data.name;
 
-                // Left side: CEO node
-                const ceoNode = document.createElement('div');
-                ceoNode.className = 'node';
+            const roleEl = document.createElement('div');
+            roleEl.className = 'role';
+            roleEl.textContent = data.role;
 
-                const personEl = document.createElement('div');
-                personEl.className = 'person';
+            personEl.appendChild(nameEl);
+            personEl.appendChild(roleEl);
+            node.appendChild(personEl);
 
-                const nameEl = document.createElement('div');
-                nameEl.className = 'name';
-                nameEl.textContent = data.name;
+            // Collect all children: direct reports + teams
+            const allChildren = [];
 
-                const roleEl = document.createElement('div');
-                roleEl.className = 'role';
-                roleEl.textContent = data.role;
-
-                personEl.appendChild(nameEl);
-                personEl.appendChild(roleEl);
-                ceoNode.appendChild(personEl);
-
-                topPair.appendChild(ceoNode);
-
-                // Horizontal connector
-                const hConnector = document.createElement('div');
-                hConnector.className = 'connector-horizontal';
-                topPair.appendChild(hConnector);
-
-                // Right side: Staff (Nat) with her teams below
-                const staffData = data.staff[0];
-                const staffNode = document.createElement('div');
-                staffNode.className = 'staff-node';
-
-                const staffPersonEl = document.createElement('div');
-                staffPersonEl.className = 'person staff';
-
-                const staffNameEl = document.createElement('div');
-                staffNameEl.className = 'name';
-                staffNameEl.textContent = staffData.name;
-
-                const staffRoleEl = document.createElement('div');
-                staffRoleEl.className = 'role';
-                staffRoleEl.textContent = staffData.role;
-
-                staffPersonEl.appendChild(staffNameEl);
-                staffPersonEl.appendChild(staffRoleEl);
-                staffNode.appendChild(staffPersonEl);
-
-                // Nat's teams below her
-                if (staffData.teams && staffData.teams.length > 0) {
-                    const staffConnector = document.createElement('div');
-                    staffConnector.className = 'connector';
-                    staffNode.appendChild(staffConnector);
-
-                    const staffChildren = document.createElement('div');
-                    staffChildren.className = 'children';
-
-                    staffData.teams.forEach(team => {
-                        const branch = document.createElement('div');
-                        branch.className = 'child-branch';
-                        
-                        const branchConnector = document.createElement('div');
-                        branchConnector.className = 'connector';
-                        branch.appendChild(branchConnector);
-                        
-                        const teamNode = createTeamNode(team);
-                        branch.appendChild(teamNode);
-                        staffChildren.appendChild(branch);
-                    });
-
-                    staffNode.appendChild(staffChildren);
-                    setTimeout(() => updateHorizontalLine(staffChildren), 100);
-                }
-
-                topPair.appendChild(staffNode);
-                wrapper.appendChild(topPair);
-
-                // Now add CEO's children below (reports + teams, not staff)
-                const allChildren = [];
-
-                if (data.reports && data.reports.length > 0) {
-                    data.reports.forEach(r => {
-                        allChildren.push({ type: 'report', data: r });
-                    });
-                }
-
-                if (data.teams && data.teams.length > 0) {
-                    data.teams.forEach(t => {
-                        allChildren.push({ type: 'team', data: t });
-                    });
-                }
-
-                if (allChildren.length > 0) {
-                    const connector = document.createElement('div');
-                    connector.className = 'connector';
-                    wrapper.appendChild(connector);
-
-                    const children = document.createElement('div');
-                    children.className = 'children';
-
-                    allChildren.forEach(child => {
-                        const branch = document.createElement('div');
-                        branch.className = 'child-branch';
-                        
-                        const branchConnector = document.createElement('div');
-                        branchConnector.className = 'connector';
-                        branch.appendChild(branchConnector);
-                        
-                        let childNode;
-                        if (child.type === 'team') {
-                            childNode = createTeamNode(child.data);
-                        } else {
-                            childNode = createPersonNode(child.data, false);
-                        }
-                        branch.appendChild(childNode);
-                        children.appendChild(branch);
-                    });
-
-                    wrapper.appendChild(children);
-                    setTimeout(() => updateHorizontalLine(children), 100);
-                }
-            } else {
-                // No staff - original layout
-                const personEl = document.createElement('div');
-                personEl.className = 'person';
-
-                const nameEl = document.createElement('div');
-                nameEl.className = 'name';
-                nameEl.textContent = data.name;
-
-                const roleEl = document.createElement('div');
-                roleEl.className = 'role';
-                roleEl.textContent = data.role;
-
-                personEl.appendChild(nameEl);
-                personEl.appendChild(roleEl);
-                wrapper.appendChild(personEl);
-
-                const allChildren = [];
-
-                if (data.reports && data.reports.length > 0) {
-                    data.reports.forEach(r => {
-                        allChildren.push({ type: 'report', data: r });
-                    });
-                }
-
-                if (data.teams && data.teams.length > 0) {
-                    data.teams.forEach(t => {
-                        allChildren.push({ type: 'team', data: t });
-                    });
-                }
-
-                if (allChildren.length > 0) {
-                    const connector = document.createElement('div');
-                    connector.className = 'connector';
-                    wrapper.appendChild(connector);
-
-                    const children = document.createElement('div');
-                    children.className = 'children';
-
-                    allChildren.forEach(child => {
-                        const branch = document.createElement('div');
-                        branch.className = 'child-branch';
-                        
-                        const branchConnector = document.createElement('div');
-                        branchConnector.className = 'connector';
-                        branch.appendChild(branchConnector);
-                        
-                        let childNode;
-                        if (child.type === 'team') {
-                            childNode = createTeamNode(child.data);
-                        } else {
-                            childNode = createPersonNode(child.data, false);
-                        }
-                        branch.appendChild(childNode);
-                        children.appendChild(branch);
-                    });
-
-                    wrapper.appendChild(children);
-                    setTimeout(() => updateHorizontalLine(children), 100);
-                }
+            if (data.reports && data.reports.length > 0) {
+                data.reports.forEach(r => {
+                    allChildren.push({ type: 'report', data: r });
+                });
             }
 
-            return wrapper;
+            if (data.teams && data.teams.length > 0) {
+                data.teams.forEach(t => {
+                    allChildren.push({ type: 'team', data: t });
+                });
+            }
+
+            if (allChildren.length > 0) {
+                const connector = document.createElement('div');
+                connector.className = 'connector';
+                node.appendChild(connector);
+
+                const children = document.createElement('div');
+                children.className = 'children';
+
+                allChildren.forEach(child => {
+                    const branch = document.createElement('div');
+                    branch.className = 'child-branch';
+                    
+                    const branchConnector = document.createElement('div');
+                    branchConnector.className = 'connector';
+                    branch.appendChild(branchConnector);
+                    
+                    let childNode;
+                    if (child.type === 'team') {
+                        childNode = createTeamNode(child.data);
+                    } else {
+                        childNode = createPersonNode(child.data, false);
+                    }
+                    branch.appendChild(childNode);
+                    children.appendChild(branch);
+                });
+
+                node.appendChild(children);
+                setTimeout(() => updateHorizontalLine(children), 100);
+            }
+
+            return node;
         }
 
         // Build the chart
