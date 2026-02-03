@@ -276,6 +276,22 @@
             height: 16px;
         }
 
+        /* Dotted line for staff roles */
+        .connector.dotted {
+            background: none;
+            border-left: 1px dashed var(--slate-400);
+        }
+
+        .children::before.dotted {
+            background: none;
+            border-top: 1px dashed var(--slate-400);
+        }
+
+        .person.staff {
+            border-style: dashed;
+            border-color: var(--slate-300);
+        }
+
         /* Controls */
         .controls {
             position: fixed;
@@ -609,107 +625,121 @@
     <script>
         // Org data structure
         const orgData = {
-            name: 'Adam',
-            role: 'COO',
-            teams: [
+            name: 'Chaz',
+            role: 'CEO',
+            staff: [
+                { name: 'Nat', role: 'Chief of Staff', dotted: true }
+            ],
+            reports: [
                 {
-                    name: 'Engagement Team',
-                    members: [
-                        {
-                            name: 'Ben',
-                            role: 'Engagement Director',
-                            reports: [
-                                { name: 'Greg', role: 'Engagement Manager', reports: [] },
-                                { name: 'Cam', role: 'Engagement Manager', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Laxmi',
-                            role: 'Engagement Director',
-                            reports: [
-                                { name: 'James', role: 'Engagement Manager', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Milan',
-                            role: 'Engagement Director',
-                            reports: [
-                                { name: 'Brenda', role: 'Engagement Manager', reports: [] },
-                                { name: 'Diogo', role: 'Engagement Manager', reports: [] },
-                                { name: 'Tej', role: 'Engagement Manager', reports: [] },
-                                { name: 'Vaqar', role: 'Engagement Manager', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Jessie',
-                            role: 'Engagement Director',
-                            reports: [
-                                { name: 'Helen', role: 'Engagement Manager', reports: [] }
-                            ]
-                        }
-                    ]
+                    name: 'Arnie',
+                    role: 'CTO',
+                    reports: []
                 },
                 {
-                    name: 'Alpha Team',
-                    head: {
-                        name: 'Ahmed',
-                        role: 'Head',
-                        reports: [
-                            {
-                                name: 'Preeti',
-                                role: 'Vector',
+                    name: 'Adam',
+                    role: 'COO',
+                    teams: [
+                        {
+                            name: 'Engagement Team',
+                            members: [
+                                {
+                                    name: 'Ben',
+                                    role: 'Engagement Director',
+                                    reports: [
+                                        { name: 'Greg', role: 'Engagement Manager', reports: [] },
+                                        { name: 'Cam', role: 'Engagement Manager', reports: [] }
+                                    ]
+                                },
+                                {
+                                    name: 'Laxmi',
+                                    role: 'Engagement Director',
+                                    reports: [
+                                        { name: 'James', role: 'Engagement Manager', reports: [] }
+                                    ]
+                                },
+                                {
+                                    name: 'Milan',
+                                    role: 'Engagement Director',
+                                    reports: [
+                                        { name: 'Brenda', role: 'Engagement Manager', reports: [] },
+                                        { name: 'Diogo', role: 'Engagement Manager', reports: [] },
+                                        { name: 'Tej', role: 'Engagement Manager', reports: [] },
+                                        { name: 'Vaqar', role: 'Engagement Manager', reports: [] }
+                                    ]
+                                },
+                                {
+                                    name: 'Jessie',
+                                    role: 'Engagement Director',
+                                    reports: [
+                                        { name: 'Helen', role: 'Engagement Manager', reports: [] }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Alpha Team',
+                            head: {
+                                name: 'Ahmed',
+                                role: 'Head',
                                 reports: [
-                                    { name: 'Vishal', role: 'Alpha', reports: [] },
-                                    { name: 'Naveen', role: 'Alpha', reports: [] },
-                                    { name: 'Anshuman', role: 'Alpha', reports: [] }
-                                ]
-                            },
-                            {
-                                name: 'Adarsh',
-                                role: 'Vector',
-                                reports: [
-                                    { name: 'Shubi', role: 'Alpha', reports: [] },
-                                    { name: 'Naman', role: 'Alpha', reports: [] }
-                                ]
-                            },
-                            {
-                                name: 'Sashwat',
-                                role: 'Vector',
-                                reports: [
-                                    { name: 'Ritish', role: 'Alpha', reports: [] },
-                                    { name: 'Ayush', role: 'Alpha', reports: [] },
-                                    { name: 'Nikhil', role: 'Alpha', reports: [] }
-                                ]
-                            },
-                            {
-                                name: 'Abhishek',
-                                role: 'Vector',
-                                reports: [
-                                    { name: 'Ajaykumar', role: 'Alpha', reports: [] },
-                                    { name: 'Parul', role: 'Alpha', reports: [] },
-                                    { name: 'Ushma', role: 'Alpha', reports: [] }
-                                ]
-                            },
-                            {
-                                name: 'Shash',
-                                role: 'Vector',
-                                reports: [
-                                    { name: 'Soumya', role: 'Alpha', reports: [] },
-                                    { name: 'Kumar', role: 'Alpha', reports: [] },
-                                    { name: 'Yugant', role: 'Alpha', reports: [] }
-                                ]
-                            },
-                            {
-                                name: 'Suman',
-                                role: 'Vector',
-                                reports: [
-                                    { name: 'Abhishek M', role: 'Alpha', reports: [] },
-                                    { name: 'Sagar', role: 'Alpha', reports: [] },
-                                    { name: 'Gitesh', role: 'Alpha', reports: [] }
+                                    {
+                                        name: 'Preeti',
+                                        role: 'Vector',
+                                        reports: [
+                                            { name: 'Vishal', role: 'Alpha', reports: [] },
+                                            { name: 'Naveen', role: 'Alpha', reports: [] },
+                                            { name: 'Anshuman', role: 'Alpha', reports: [] }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Adarsh',
+                                        role: 'Vector',
+                                        reports: [
+                                            { name: 'Shubi', role: 'Alpha', reports: [] },
+                                            { name: 'Naman', role: 'Alpha', reports: [] }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Sashwat',
+                                        role: 'Vector',
+                                        reports: [
+                                            { name: 'Ritish', role: 'Alpha', reports: [] },
+                                            { name: 'Ayush', role: 'Alpha', reports: [] },
+                                            { name: 'Nikhil', role: 'Alpha', reports: [] }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Abhishek',
+                                        role: 'Vector',
+                                        reports: [
+                                            { name: 'Ajaykumar', role: 'Alpha', reports: [] },
+                                            { name: 'Parul', role: 'Alpha', reports: [] },
+                                            { name: 'Ushma', role: 'Alpha', reports: [] }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Shash',
+                                        role: 'Vector',
+                                        reports: [
+                                            { name: 'Soumya', role: 'Alpha', reports: [] },
+                                            { name: 'Kumar', role: 'Alpha', reports: [] },
+                                            { name: 'Yugant', role: 'Alpha', reports: [] }
+                                        ]
+                                    },
+                                    {
+                                        name: 'Suman',
+                                        role: 'Vector',
+                                        reports: [
+                                            { name: 'Abhishek M', role: 'Alpha', reports: [] },
+                                            { name: 'Sagar', role: 'Alpha', reports: [] },
+                                            { name: 'Gitesh', role: 'Alpha', reports: [] }
+                                        ]
+                                    }
                                 ]
                             }
-                        ]
-                    }
+                        }
+                    ]
                 }
             ]
         };
@@ -894,12 +924,12 @@
         }
 
         // Person nodes are always expanded - no click to expand
-        function createPersonNode(person) {
+        function createPersonNode(person, isDotted = false) {
             const node = document.createElement('div');
             node.className = 'node';
 
             const personEl = document.createElement('div');
-            personEl.className = 'person';
+            personEl.className = 'person' + (isDotted ? ' staff' : '');
 
             const nameEl = document.createElement('div');
             nameEl.className = 'name';
@@ -913,8 +943,33 @@
             personEl.appendChild(roleEl);
             node.appendChild(personEl);
 
+            // Check for teams (like Adam has)
+            if (person.teams && person.teams.length > 0) {
+                const connector = document.createElement('div');
+                connector.className = 'connector';
+                node.appendChild(connector);
+
+                const children = document.createElement('div');
+                children.className = 'children';
+
+                person.teams.forEach(team => {
+                    const branch = document.createElement('div');
+                    branch.className = 'child-branch';
+                    
+                    const branchConnector = document.createElement('div');
+                    branchConnector.className = 'connector';
+                    branch.appendChild(branchConnector);
+                    
+                    const teamNode = createTeamNode(team);
+                    branch.appendChild(teamNode);
+                    children.appendChild(branch);
+                });
+
+                node.appendChild(children);
+                setTimeout(() => updateHorizontalLine(children), 10);
+            }
             // If has reports, always show them (no collapse)
-            if (person.reports && person.reports.length > 0) {
+            else if (person.reports && person.reports.length > 0) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
                 node.appendChild(connector);
@@ -1040,7 +1095,31 @@
             personEl.appendChild(roleEl);
             node.appendChild(personEl);
 
+            // Collect all children: staff (dotted) + direct reports + teams
+            const allChildren = [];
+
+            // Staff with dotted lines (like Chief of Staff)
+            if (data.staff && data.staff.length > 0) {
+                data.staff.forEach(s => {
+                    allChildren.push({ type: 'staff', data: s });
+                });
+            }
+
+            // Direct reports (like CTO, COO)
+            if (data.reports && data.reports.length > 0) {
+                data.reports.forEach(r => {
+                    allChildren.push({ type: 'report', data: r });
+                });
+            }
+
+            // Teams (legacy support)
             if (data.teams && data.teams.length > 0) {
+                data.teams.forEach(t => {
+                    allChildren.push({ type: 'team', data: t });
+                });
+            }
+
+            if (allChildren.length > 0) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
                 node.appendChild(connector);
@@ -1048,16 +1127,21 @@
                 const children = document.createElement('div');
                 children.className = 'children';
 
-                data.teams.forEach(team => {
+                allChildren.forEach(child => {
                     const branch = document.createElement('div');
                     branch.className = 'child-branch';
                     
                     const branchConnector = document.createElement('div');
-                    branchConnector.className = 'connector';
+                    branchConnector.className = 'connector' + (child.type === 'staff' ? ' dotted' : '');
                     branch.appendChild(branchConnector);
                     
-                    const teamNode = createTeamNode(team);
-                    branch.appendChild(teamNode);
+                    let childNode;
+                    if (child.type === 'team') {
+                        childNode = createTeamNode(child.data);
+                    } else {
+                        childNode = createPersonNode(child.data, child.type === 'staff');
+                    }
+                    branch.appendChild(childNode);
                     children.appendChild(branch);
                 });
 
