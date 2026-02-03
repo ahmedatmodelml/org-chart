@@ -636,11 +636,78 @@
                         {
                             name: 'Ops',
                             members: [
-                                { name: 'Ahmed', role: 'Ops', reports: [] },
-                                { name: 'John', role: 'Ops', reports: [] },
-                                { name: 'Jill', role: 'Ops', reports: [] },
-                                { name: 'Lucy', role: 'Ops', reports: [] },
-                                { name: 'Grace', role: 'Ops', reports: [] }
+                                {
+                                    name: 'Ahmed',
+                                    role: 'Special Projects',
+                                    teams: [
+                                        {
+                                            name: 'Alpha Team',
+                                            head: {
+                                                name: 'Ahmed K',
+                                                role: 'Head',
+                                                reports: [
+                                                    {
+                                                        name: 'Preeti',
+                                                        role: 'Vector',
+                                                        reports: [
+                                                            { name: 'Vishal', role: 'Alpha', reports: [] },
+                                                            { name: 'Naveen', role: 'Alpha', reports: [] },
+                                                            { name: 'Anshuman', role: 'Alpha', reports: [] }
+                                                        ]
+                                                    },
+                                                    {
+                                                        name: 'Adarsh',
+                                                        role: 'Vector',
+                                                        reports: [
+                                                            { name: 'Shubi', role: 'Alpha', reports: [] },
+                                                            { name: 'Naman', role: 'Alpha', reports: [] }
+                                                        ]
+                                                    },
+                                                    {
+                                                        name: 'Sashwat',
+                                                        role: 'Vector',
+                                                        reports: [
+                                                            { name: 'Ritish', role: 'Alpha', reports: [] },
+                                                            { name: 'Ayush', role: 'Alpha', reports: [] },
+                                                            { name: 'Nikhil', role: 'Alpha', reports: [] }
+                                                        ]
+                                                    },
+                                                    {
+                                                        name: 'Abhishek',
+                                                        role: 'Vector',
+                                                        reports: [
+                                                            { name: 'Ajaykumar', role: 'Alpha', reports: [] },
+                                                            { name: 'Parul', role: 'Alpha', reports: [] },
+                                                            { name: 'Ushma', role: 'Alpha', reports: [] }
+                                                        ]
+                                                    },
+                                                    {
+                                                        name: 'Shash',
+                                                        role: 'Vector',
+                                                        reports: [
+                                                            { name: 'Soumya', role: 'Alpha', reports: [] },
+                                                            { name: 'Kumar', role: 'Alpha', reports: [] },
+                                                            { name: 'Yugant', role: 'Alpha', reports: [] }
+                                                        ]
+                                                    },
+                                                    {
+                                                        name: 'Suman',
+                                                        role: 'Vector',
+                                                        reports: [
+                                                            { name: 'Abhishek M', role: 'Alpha', reports: [] },
+                                                            { name: 'Sagar', role: 'Alpha', reports: [] },
+                                                            { name: 'Gitesh', role: 'Alpha', reports: [] }
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                { name: 'John', role: 'Relationship Manager', reports: [] },
+                                { name: 'Jill', role: 'EA / NY Office Manager', reports: [] },
+                                { name: 'Lucy', role: 'EA / UK Office Manager', reports: [] },
+                                { name: 'Grace', role: 'Chaz PA', reports: [] }
                             ]
                         },
                         {
@@ -676,12 +743,12 @@
                     members: [
                         {
                             name: 'Jonny',
-                            role: 'Sales',
+                            role: 'EMEA IB',
                             reports: [
-                                { name: 'Philip', role: 'Sales', reports: [] },
-                                { name: 'Eli', role: 'Sales', reports: [] },
+                                { name: 'Philip', role: 'EMEA PE', reports: [] },
+                                { name: 'Eli', role: 'US IB', reports: [] },
                                 { name: 'Steven', role: 'Sales', reports: [] },
-                                { name: 'Rags', role: 'Sales', reports: [] }
+                                { name: 'Rags', role: 'EMEA/APAC Consulting', reports: [] }
                             ]
                         }
                     ]
@@ -713,7 +780,7 @@
                             members: [
                                 {
                                     name: 'Mark',
-                                    role: 'Engineer',
+                                    role: 'Head of Engineering',
                                     reports: [
                                         { name: 'Roman', role: 'Engineer', reports: [
                                             { name: 'Danish', role: 'Engineer', reports: [] },
@@ -735,7 +802,7 @@
                                         { name: 'Sergey', role: 'Engineer', reports: [] }
                                     ]
                                 },
-                                { name: 'James', role: 'Engineer', reports: [] }
+                                { name: 'James', role: 'Head of AI', reports: [] }
                             ]
                         }
                     ]
@@ -749,7 +816,7 @@
                             members: [
                                 {
                                     name: 'Ben',
-                                    role: 'Engagement Director',
+                                    role: 'US IB Lead',
                                     reports: [
                                         { name: 'Greg', role: 'Engagement Manager', reports: [] },
                                         { name: 'Cam', role: 'Engagement Manager', reports: [] },
@@ -759,7 +826,7 @@
                                 },
                                 {
                                     name: 'Laxmi',
-                                    role: 'Engagement Director',
+                                    role: 'EMEA IB Lead',
                                     reports: [
                                         { name: 'James', role: 'Engagement Manager', reports: [] },
                                         { name: 'Ian', role: 'Engagement Manager', reports: [] }
@@ -767,7 +834,7 @@
                                 },
                                 {
                                     name: 'Milan',
-                                    role: 'Engagement Director',
+                                    role: 'EMEA Consulting Lead',
                                     reports: [
                                         { name: 'Brenda', role: 'Engagement Manager', reports: [] },
                                         { name: 'Diogo', role: 'Engagement Manager', reports: [] },
@@ -784,68 +851,6 @@
                                     ]
                                 }
                             ]
-                        },
-                        {
-                            name: 'Alpha Team',
-                            head: {
-                                name: 'Ahmed',
-                                role: 'Head',
-                                reports: [
-                                    {
-                                        name: 'Preeti',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Vishal', role: 'Alpha', reports: [] },
-                                            { name: 'Naveen', role: 'Alpha', reports: [] },
-                                            { name: 'Anshuman', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Adarsh',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Shubi', role: 'Alpha', reports: [] },
-                                            { name: 'Naman', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Sashwat',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Ritish', role: 'Alpha', reports: [] },
-                                            { name: 'Ayush', role: 'Alpha', reports: [] },
-                                            { name: 'Nikhil', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Abhishek',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Ajaykumar', role: 'Alpha', reports: [] },
-                                            { name: 'Parul', role: 'Alpha', reports: [] },
-                                            { name: 'Ushma', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Shash',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Soumya', role: 'Alpha', reports: [] },
-                                            { name: 'Kumar', role: 'Alpha', reports: [] },
-                                            { name: 'Yugant', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Suman',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Abhishek M', role: 'Alpha', reports: [] },
-                                            { name: 'Sagar', role: 'Alpha', reports: [] },
-                                            { name: 'Gitesh', role: 'Alpha', reports: [] }
-                                        ]
-                                    }
-                                ]
-                            }
                         }
                     ]
                 }
