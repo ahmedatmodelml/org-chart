@@ -137,41 +137,9 @@
             transition: all 0.2s ease;
         }
 
-        .person.clickable {
-            cursor: pointer;
-        }
-
-        .person.clickable:hover {
+        .person:hover {
             border-color: var(--slate-300);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
-            transform: translateY(-2px);
-        }
-
-        .person.expanded {
-            border-color: var(--slate-900);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
-        }
-
-        .person.has-reports::after {
-            content: '+';
-            position: absolute;
-            bottom: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--slate-900);
-            color: var(--white);
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            font-size: 16px;
-            line-height: 22px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .person.has-reports.expanded::after {
-            content: '−';
-            background: var(--slate-900);
         }
 
         .person .name {
@@ -188,17 +156,6 @@
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.03em;
-        }
-
-        .person .count {
-            font-size: 11px;
-            color: var(--slate-400);
-            margin-top: 8px;
-            font-weight: 500;
-        }
-
-        .person.expanded .count {
-            color: var(--slate-600);
         }
 
         /* Team node styling */
@@ -394,16 +351,16 @@
             }
         }
 
-        .children:not(.collapsed) > .child-branch {
+        .team-children:not(.collapsed) > .child-branch {
             animation: nodeAppear 0.3s ease forwards;
         }
 
-        .children:not(.collapsed) > .child-branch:nth-child(1) { animation-delay: 0.02s; }
-        .children:not(.collapsed) > .child-branch:nth-child(2) { animation-delay: 0.04s; }
-        .children:not(.collapsed) > .child-branch:nth-child(3) { animation-delay: 0.06s; }
-        .children:not(.collapsed) > .child-branch:nth-child(4) { animation-delay: 0.08s; }
-        .children:not(.collapsed) > .child-branch:nth-child(5) { animation-delay: 0.10s; }
-        .children:not(.collapsed) > .child-branch:nth-child(6) { animation-delay: 0.12s; }
+        .team-children:not(.collapsed) > .child-branch:nth-child(1) { animation-delay: 0.02s; }
+        .team-children:not(.collapsed) > .child-branch:nth-child(2) { animation-delay: 0.04s; }
+        .team-children:not(.collapsed) > .child-branch:nth-child(3) { animation-delay: 0.06s; }
+        .team-children:not(.collapsed) > .child-branch:nth-child(4) { animation-delay: 0.08s; }
+        .team-children:not(.collapsed) > .child-branch:nth-child(5) { animation-delay: 0.10s; }
+        .team-children:not(.collapsed) > .child-branch:nth-child(6) { animation-delay: 0.12s; }
     </style>
 </head>
 <body>
@@ -423,7 +380,7 @@
     </div>
     
     <div class="legend">
-        <div><kbd>Click +</kbd> Expand</div>
+        <div><kbd>Click +</kbd> Expand team</div>
         <div><kbd>Scroll</kbd> Zoom</div>
         <div><kbd>Drag</kbd> Pan</div>
     </div>
@@ -569,7 +526,7 @@
         container.addEventListener('wheel', (e) => {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 0.92 : 1.08;
-            const newScale = Math.min(Math.max(scale * delta, 0.2), 3);
+            const newScale = Math.min(Math.max(scale * delta, 0.15), 3);
             
             const rect = container.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -584,7 +541,7 @@
 
         // Pan with mouse drag
         container.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.person, .team')) return;
+            if (e.target.closest('.team')) return;
             isDragging = true;
             startX = e.clientX - panX;
             startY = e.clientY - panY;
@@ -634,7 +591,7 @@
                     e.touches[0].clientY - e.touches[1].clientY
                 );
                 const delta = dist / lastTouchDist;
-                const newScale = Math.min(Math.max(scale * delta, 0.2), 3);
+                const newScale = Math.min(Math.max(scale * delta, 0.15), 3);
                 
                 const touchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
                 const touchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
@@ -662,7 +619,7 @@
         });
 
         document.getElementById('zoomOut').addEventListener('click', () => {
-            scale = Math.max(scale * 0.85, 0.2);
+            scale = Math.max(scale * 0.85, 0.15);
             updateTransform();
         });
 
@@ -712,17 +669,13 @@
             document.querySelectorAll('.children:not(.collapsed)').forEach(updateHorizontalLine);
         }
 
+        // Person nodes are always expanded - no click to expand
         function createPersonNode(person) {
             const node = document.createElement('div');
             node.className = 'node';
 
             const personEl = document.createElement('div');
             personEl.className = 'person';
-            
-            const hasReports = person.reports && person.reports.length > 0;
-            if (hasReports) {
-                personEl.classList.add('has-reports', 'clickable');
-            }
 
             const nameEl = document.createElement('div');
             nameEl.className = 'name';
@@ -734,25 +687,16 @@
 
             personEl.appendChild(nameEl);
             personEl.appendChild(roleEl);
-
-            const totalReports = countAllReports(person);
-            if (totalReports > 0) {
-                const countEl = document.createElement('div');
-                countEl.className = 'count';
-                countEl.textContent = `${totalReports} report${totalReports > 1 ? 's' : ''}`;
-                personEl.appendChild(countEl);
-            }
-
             node.appendChild(personEl);
 
-            if (hasReports) {
+            // If has reports, always show them (no collapse)
+            if (person.reports && person.reports.length > 0) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
-                connector.style.display = 'none';
                 node.appendChild(connector);
 
                 const children = document.createElement('div');
-                children.className = 'children collapsed';
+                children.className = 'children';
 
                 person.reports.forEach(report => {
                     const branch = document.createElement('div');
@@ -769,35 +713,8 @@
 
                 node.appendChild(children);
 
-                personEl.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const isExpanded = personEl.classList.contains('expanded');
-                    
-                    if (isExpanded) {
-                        personEl.classList.remove('expanded');
-                        connector.style.display = 'none';
-                        children.classList.add('collapsed');
-                        
-                        // Collapse all descendants
-                        children.querySelectorAll('.person.expanded, .team.expanded').forEach(p => {
-                            p.classList.remove('expanded');
-                        });
-                        children.querySelectorAll('.connector').forEach(c => {
-                            c.style.display = 'none';
-                        });
-                        children.querySelectorAll('.children').forEach(c => {
-                            c.classList.add('collapsed');
-                        });
-                    } else {
-                        personEl.classList.add('expanded');
-                        connector.style.display = 'block';
-                        children.classList.remove('collapsed');
-                        updateHorizontalLine(children);
-                    }
-                    
-                    // Update all visible lines after layout change
-                    setTimeout(updateAllLines, 350);
-                });
+                // Update lines after render
+                setTimeout(() => updateHorizontalLine(children), 10);
             }
 
             return node;
@@ -829,7 +746,7 @@
             node.appendChild(connector);
 
             const children = document.createElement('div');
-            children.className = 'children collapsed';
+            children.className = 'children team-children collapsed';
 
             if (team.head) {
                 const branch = document.createElement('div');
@@ -867,24 +784,14 @@
                     teamEl.classList.remove('expanded');
                     connector.style.display = 'none';
                     children.classList.add('collapsed');
-                    
-                    children.querySelectorAll('.person.expanded, .team.expanded').forEach(p => {
-                        p.classList.remove('expanded');
-                    });
-                    children.querySelectorAll('.connector').forEach(c => {
-                        c.style.display = 'none';
-                    });
-                    children.querySelectorAll('.children').forEach(c => {
-                        c.classList.add('collapsed');
-                    });
                 } else {
                     teamEl.classList.add('expanded');
                     connector.style.display = 'block';
                     children.classList.remove('collapsed');
-                    updateHorizontalLine(children);
+                    
+                    // Update all lines after expansion
+                    setTimeout(updateAllLines, 50);
                 }
-                
-                setTimeout(updateAllLines, 350);
             });
 
             return node;
