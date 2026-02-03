@@ -610,6 +610,7 @@
     </div>
 
     <div class="controls">
+        <button id="expandAll" aria-label="Expand all" title="Expand all">⊞</button>
         <button id="zoomIn" aria-label="Zoom in">+</button>
         <div class="zoom-level" id="zoomLevel">100%</div>
         <button id="zoomOut" aria-label="Zoom out">−</button>
@@ -995,6 +996,44 @@
             panX = 0;
             panY = 0;
             updateTransform();
+        });
+
+        // Expand/Collapse all toggle
+        let allExpanded = false;
+        const expandBtn = document.getElementById('expandAll');
+        
+        document.getElementById('expandAll').addEventListener('click', () => {
+            allExpanded = !allExpanded;
+            const teams = document.querySelectorAll('.team');
+            const teamChildren = document.querySelectorAll('.team-children');
+            const connectors = document.querySelectorAll('.team + .connector');
+            
+            teams.forEach(team => {
+                if (allExpanded) {
+                    team.classList.add('expanded');
+                } else {
+                    team.classList.remove('expanded');
+                }
+            });
+            
+            teamChildren.forEach(children => {
+                if (allExpanded) {
+                    children.classList.remove('collapsed');
+                } else {
+                    children.classList.add('collapsed');
+                }
+            });
+            
+            connectors.forEach(connector => {
+                connector.style.display = allExpanded ? 'block' : 'none';
+            });
+            
+            expandBtn.textContent = allExpanded ? '⊟' : '⊞';
+            expandBtn.title = allExpanded ? 'Collapse all' : 'Expand all';
+            
+            if (allExpanded) {
+                setTimeout(updateAllLines, 50);
+            }
         });
 
         function countAllReports(person) {
