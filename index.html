@@ -628,7 +628,35 @@
             name: 'Chaz',
             role: 'CEO',
             staff: [
-                { name: 'Nat', role: 'Chief of Staff', dotted: true }
+                {
+                    name: 'Nat',
+                    role: 'Chief of Staff',
+                    dotted: true,
+                    teams: [
+                        {
+                            name: 'Ops',
+                            members: [
+                                { name: 'Ahmed', role: 'Ops', reports: [] },
+                                { name: 'John', role: 'Ops', reports: [] },
+                                { name: 'Jill', role: 'Ops', reports: [] },
+                                { name: 'Lucy', role: 'Ops', reports: [] },
+                                { name: 'Grace', role: 'Ops', reports: [] }
+                            ]
+                        },
+                        {
+                            name: 'Finance',
+                            members: [
+                                { name: 'Harun', role: 'Finance', reports: [] }
+                            ]
+                        },
+                        {
+                            name: 'Legal',
+                            members: [
+                                { name: 'Eli', role: 'Legal', reports: [] }
+                            ]
+                        }
+                    ]
+                }
             ],
             teams: [
                 {
