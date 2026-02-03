@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Org Chart</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        h1 {
+            text-align: center;
+            padding: 20px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            color: #e2e2e2;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: linear-gradient(180deg, rgba(26,26,46,1) 0%, rgba(26,26,46,0.8) 80%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .canvas-container {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            cursor: grab;
+        }
+
+        .canvas-container:active {
+            cursor: grabbing;
+        }
+
+        .canvas {
+            transform-origin: 0 0;
+            padding: 100px 50px 50px 50px;
+            min-width: 100vw;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .org-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-bottom: 60px;
+        }
+
+        .node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .person {
+            background: linear-gradient(145deg, #2d2d44 0%, #1f1f35 100%);
+            border: 2px solid #3d3d5c;
+            border-radius: 12px;
+            padding: 16px 24px;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            user-select: none;
+        }
+
+        .person.clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .person.clickable:hover {
+            transform: translateY(-3px);
+            border-color: #6c63ff;
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.3);
+        }
+
+        .person.expanded {
+            border-color: #00d9ff;
+            background: linear-gradient(145deg, #3d3d5c 0%, #2a2a45 100%);
+        }
+
+        .person.has-reports::after {
+            content: '+';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #6c63ff;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 14px;
+            line-height: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .person.has-reports.expanded::after {
+            content: '−';
+            background: #00d9ff;
+        }
+
+        .person .name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .person .role {
+            font-size: 11px;
+            color: #888;
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .person .count {
+            font-size: 10px;
+            color: #6c63ff;
+            margin-top: 6px;
+        }
+
+        .person.expanded .count {
+            color: #00d9ff;
+        }
+
+        /* Team node styling */
+        .team {
+            background: linear-gradient(145deg, #1e3a5f 0%, #152238 100%);
+            border: 2px solid #2a5a8a;
+            border-radius: 12px;
+            padding: 16px 28px;
+            min-width: 180px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .team:hover {
+            transform: translateY(-3px);
+            border-color: #4a9eff;
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+        }
+
+        .team.expanded {
+            border-color: #00d9ff;
+            background: linear-gradient(145deg, #2a5a8a 0%, #1e3a5f 100%);
+        }
+
+        .team::after {
+            content: '+';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4a9eff;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 14px;
+            line-height: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .team.expanded::after {
+            content: '−';
+            background: #00d9ff;
+        }
+
+        .team .name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .team .count {
+            font-size: 11px;
+            color: #4a9eff;
+            margin-top: 6px;
+        }
+
+        .team.expanded .count {
+            color: #00d9ff;
+        }
+
+        .connector {
+            width: 2px;
+            height: 30px;
+            background: #3d3d5c;
+            transition: all 0.3s ease;
+        }
+
+        .children {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            padding-top: 30px;
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .children.visible {
+            max-height: 4000px;
+            opacity: 1;
+        }
+
+        .children::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            height: 2px;
+            background: #3d3d5c;
+            left: var(--line-left, 50%);
+            width: var(--line-width, 0);
+            transition: all 0.3s ease;
+        }
+
+        .child-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .child-branch > .connector {
+            height: 30px;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .controls button {
+            width: 44px;
+            height: 44px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(45, 45, 68, 0.95);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid #3d3d5c;
+        }
+
+        .controls button:hover {
+            background: rgba(60, 60, 90, 0.95);
+            border-color: #6c63ff;
+        }
+
+        .controls button:active {
+            transform: scale(0.95);
+        }
+
+        .zoom-level {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            padding: 4px 0;
+        }
+
+        .legend {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: rgba(45, 45, 68, 0.9);
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #888;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .legend div {
+            margin-bottom: 6px;
+        }
+
+        .legend div:last-child {
+            margin-bottom: 0;
+        }
+
+        .legend span {
+            color: #00d9ff;
+        }
+
+        @keyframes nodeAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .children.visible > .child-branch {
+            animation: nodeAppear 0.3s ease forwards;
+        }
+
+        .children.visible > .child-branch:nth-child(1) { animation-delay: 0.05s; }
+        .children.visible > .child-branch:nth-child(2) { animation-delay: 0.1s; }
+        .children.visible > .child-branch:nth-child(3) { animation-delay: 0.15s; }
+        .children.visible > .child-branch:nth-child(4) { animation-delay: 0.2s; }
+        .children.visible > .child-branch:nth-child(5) { animation-delay: 0.25s; }
+        .children.visible > .child-branch:nth-child(6) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <h1>TEAM ORG CHART</h1>
+    
+    <div class="legend">
+        <div>Click <span>+</span> to expand</div>
+        <div>Scroll to zoom</div>
+        <div>Drag to pan</div>
+    </div>
+
+    <div class="controls">
+        <button id="zoomIn">+</button>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <button id="zoomOut">−</button>
+        <button id="resetView">⌂</button>
+    </div>
+
+    <div class="canvas-container" id="container">
+        <div class="canvas" id="canvas">
+            <div class="org-chart" id="orgChart"></div>
+        </div>
+    </div>
+
+    <script>
+        // Org data structure
+        const orgData = {
+            name: 'Adam',
+            role: 'COO',
+            teams: [
+                {
+                    name: 'Engagement Team',
+                    members: [
+                        {
+                            name: 'Ben',
+                            role: 'Engagement Director',
+                            reports: [
+                                { name: 'Greg', role: 'Engagement Manager', reports: [] },
+                                { name: 'Cam', role: 'Engagement Manager', reports: [] }
+                            ]
+                        },
+                        {
+                            name: 'Laxmi',
+                            role: 'Engagement Director',
+                            reports: [
+                                { name: 'James', role: 'Engagement Manager', reports: [] }
+                            ]
+                        },
+                        {
+                            name: 'Milan',
+                            role: 'Engagement Director',
+                            reports: [
+                                { name: 'Brenda', role: 'Engagement Manager', reports: [] },
+                                { name: 'Diogo', role: 'Engagement Manager', reports: [] },
+                                { name: 'Tej', role: 'Engagement Manager', reports: [] },
+                                { name: 'Vaqar', role: 'Engagement Manager', reports: [] }
+                            ]
+                        },
+                        {
+                            name: 'Jessie',
+                            role: 'Engagement Director',
+                            reports: [
+                                { name: 'Helen', role: 'Engagement Manager', reports: [] }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    name: 'Alpha Team',
+                    head: {
+                        name: 'Ahmed',
+                        role: 'Head',
+                        reports: [
+                            {
+                                name: 'Preeti',
+                                role: 'Vector',
+                                reports: [
+                                    { name: 'Vishal', role: 'Alpha', reports: [] },
+                                    { name: 'Naveen', role: 'Alpha', reports: [] },
+                                    { name: 'Anshuman', role: 'Alpha', reports: [] }
+                                ]
+                            },
+                            {
+                                name: 'Adarsh',
+                                role: 'Vector',
+                                reports: [
+                                    { name: 'Shubi', role: 'Alpha', reports: [] },
+                                    { name: 'Naman', role: 'Alpha', reports: [] }
+                                ]
+                            },
+                            {
+                                name: 'Sashwat',
+                                role: 'Vector',
+                                reports: [
+                                    { name: 'Ritish', role: 'Alpha', reports: [] },
+                                    { name: 'Ayush', role: 'Alpha', reports: [] },
+                                    { name: 'Nikhil', role: 'Alpha', reports: [] }
+                                ]
+                            },
+                            {
+                                name: 'Abhishek',
+                                role: 'Vector',
+                                reports: [
+                                    { name: 'Ajaykumar', role: 'Alpha', reports: [] },
+                                    { name: 'Parul', role: 'Alpha', reports: [] },
+                                    { name: 'Ushma', role: 'Alpha', reports: [] }
+                                ]
+                            },
+                            {
+                                name: 'Shash',
+                                role: 'Vector',
+                                reports: [
+                                    { name: 'Soumya', role: 'Alpha', reports: [] },
+                                    { name: 'Kumar', role: 'Alpha', reports: [] },
+                                    { name: 'Yugant', role: 'Alpha', reports: [] }
+                                ]
+                            },
+                            {
+                                name: 'Suman',
+                                role: 'Vector',
+                                reports: [
+                                    { name: 'Abhishek M', role: 'Alpha', reports: [] },
+                                    { name: 'Sagar', role: 'Alpha', reports: [] },
+                                    { name: 'Gitesh', role: 'Alpha', reports: [] }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        };
+
+        // Zoom and pan state
+        let scale = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let startX, startY;
+
+        const container = document.getElementById('container');
+        const canvas = document.getElementById('canvas');
+        const zoomLevelDisplay = document.getElementById('zoomLevel');
+
+        function updateTransform() {
+            canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
+            zoomLevelDisplay.textContent = `${Math.round(scale * 100)}%`;
+        }
+
+        // Mouse wheel zoom
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            const newScale = Math.min(Math.max(scale * delta, 0.2), 3);
+            
+            // Zoom toward cursor
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            panX = x - (x - panX) * (newScale / scale);
+            panY = y - (y - panY) * (newScale / scale);
+            scale = newScale;
+            
+            updateTransform();
+        }, { passive: false });
+
+        // Pan with mouse drag
+        container.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.person, .team')) return;
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            updateTransform();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+
+        // Touch support
+        let lastTouchDist = 0;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                isDragging = true;
+                startX = e.touches[0].clientX - panX;
+                startY = e.touches[0].clientY - panY;
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                lastTouchDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                lastTouchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                lastTouchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length === 1 && isDragging) {
+                panX = e.touches[0].clientX - startX;
+                panY = e.touches[0].clientY - startY;
+                updateTransform();
+            } else if (e.touches.length === 2) {
+                const dist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                const delta = dist / lastTouchDist;
+                const newScale = Math.min(Math.max(scale * delta, 0.2), 3);
+                
+                const touchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const touchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                
+                panX = touchX - (lastTouchX - panX) * (newScale / scale);
+                panY = touchY - (lastTouchY - panY) * (newScale / scale);
+                scale = newScale;
+                
+                lastTouchDist = dist;
+                lastTouchX = touchX;
+                lastTouchY = touchY;
+                
+                updateTransform();
+            }
+        }, { passive: false });
+
+        container.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Button controls
+        document.getElementById('zoomIn').addEventListener('click', () => {
+            scale = Math.min(scale * 1.2, 3);
+            updateTransform();
+        });
+
+        document.getElementById('zoomOut').addEventListener('click', () => {
+            scale = Math.max(scale * 0.8, 0.2);
+            updateTransform();
+        });
+
+        document.getElementById('resetView').addEventListener('click', () => {
+            scale = 1;
+            panX = 0;
+            panY = 0;
+            updateTransform();
+        });
+
+        function countAllReports(person) {
+            if (!person.reports || person.reports.length === 0) return 0;
+            let count = person.reports.length;
+            person.reports.forEach(r => {
+                count += countAllReports(r);
+            });
+            return count;
+        }
+
+        function countTeamMembers(team) {
+            if (team.head) {
+                return 1 + countAllReports(team.head);
+            }
+            let count = team.members.length;
+            team.members.forEach(m => {
+                count += countAllReports(m);
+            });
+            return count;
+        }
+
+        function updateHorizontalLine(children) {
+            setTimeout(() => {
+                const branches = Array.from(children.querySelectorAll(':scope > .child-branch'));
+                if (branches.length > 1) {
+                    const firstCenter = branches[0].offsetLeft + branches[0].offsetWidth / 2;
+                    const lastCenter = branches[branches.length - 1].offsetLeft + branches[branches.length - 1].offsetWidth / 2;
+                    children.style.setProperty('--line-left', `${firstCenter}px`);
+                    children.style.setProperty('--line-width', `${lastCenter - firstCenter}px`);
+                } else if (branches.length === 1) {
+                    children.style.setProperty('--line-left', '50%');
+                    children.style.setProperty('--line-width', '0px');
+                }
+            }, 50);
+        }
+
+        function createPersonNode(person) {
+            const node = document.createElement('div');
+            node.className = 'node';
+
+            const personEl = document.createElement('div');
+            personEl.className = 'person';
+            
+            const hasReports = person.reports && person.reports.length > 0;
+            if (hasReports) {
+                personEl.classList.add('has-reports', 'clickable');
+            }
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'name';
+            nameEl.textContent = person.name;
+
+            const roleEl = document.createElement('div');
+            roleEl.className = 'role';
+            roleEl.textContent = person.role;
+
+            personEl.appendChild(nameEl);
+            personEl.appendChild(roleEl);
+
+            const totalReports = countAllReports(person);
+            if (totalReports > 0) {
+                const countEl = document.createElement('div');
+                countEl.className = 'count';
+                countEl.textContent = `${totalReports} report${totalReports > 1 ? 's' : ''}`;
+                personEl.appendChild(countEl);
+            }
+
+            node.appendChild(personEl);
+
+            if (hasReports) {
+                const connector = document.createElement('div');
+                connector.className = 'connector';
+                connector.style.display = 'none';
+                node.appendChild(connector);
+
+                const children = document.createElement('div');
+                children.className = 'children';
+
+                person.reports.forEach(report => {
+                    const branch = document.createElement('div');
+                    branch.className = 'child-branch';
+                    
+                    const branchConnector = document.createElement('div');
+                    branchConnector.className = 'connector';
+                    branch.appendChild(branchConnector);
+                    
+                    const childNode = createPersonNode(report);
+                    branch.appendChild(childNode);
+                    children.appendChild(branch);
+                });
+
+                node.appendChild(children);
+
+                personEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isExpanded = personEl.classList.contains('expanded');
+                    
+                    if (isExpanded) {
+                        personEl.classList.remove('expanded');
+                        connector.style.display = 'none';
+                        children.classList.remove('visible');
+                        
+                        children.querySelectorAll('.person.expanded, .team.expanded').forEach(p => {
+                            p.classList.remove('expanded');
+                        });
+                        children.querySelectorAll('.connector').forEach(c => {
+                            c.style.display = 'none';
+                        });
+                        children.querySelectorAll('.children').forEach(c => {
+                            c.classList.remove('visible');
+                        });
+                    } else {
+                        personEl.classList.add('expanded');
+                        connector.style.display = 'block';
+                        children.classList.add('visible');
+                        updateHorizontalLine(children);
+                    }
+                });
+            }
+
+            return node;
+        }
+
+        function createTeamNode(team) {
+            const node = document.createElement('div');
+            node.className = 'node';
+
+            const teamEl = document.createElement('div');
+            teamEl.className = 'team';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'name';
+            nameEl.textContent = team.name;
+
+            const countEl = document.createElement('div');
+            countEl.className = 'count';
+            const memberCount = countTeamMembers(team);
+            countEl.textContent = `${memberCount} member${memberCount > 1 ? 's' : ''}`;
+
+            teamEl.appendChild(nameEl);
+            teamEl.appendChild(countEl);
+            node.appendChild(teamEl);
+
+            const connector = document.createElement('div');
+            connector.className = 'connector';
+            connector.style.display = 'none';
+            node.appendChild(connector);
+
+            const children = document.createElement('div');
+            children.className = 'children';
+
+            if (team.head) {
+                const branch = document.createElement('div');
+                branch.className = 'child-branch';
+                
+                const branchConnector = document.createElement('div');
+                branchConnector.className = 'connector';
+                branch.appendChild(branchConnector);
+                
+                const childNode = createPersonNode(team.head);
+                branch.appendChild(childNode);
+                children.appendChild(branch);
+            } else if (team.members) {
+                team.members.forEach(member => {
+                    const branch = document.createElement('div');
+                    branch.className = 'child-branch';
+                    
+                    const branchConnector = document.createElement('div');
+                    branchConnector.className = 'connector';
+                    branch.appendChild(branchConnector);
+                    
+                    const childNode = createPersonNode(member);
+                    branch.appendChild(childNode);
+                    children.appendChild(branch);
+                });
+            }
+
+            node.appendChild(children);
+
+            teamEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isExpanded = teamEl.classList.contains('expanded');
+                
+                if (isExpanded) {
+                    teamEl.classList.remove('expanded');
+                    connector.style.display = 'none';
+                    children.classList.remove('visible');
+                    
+                    children.querySelectorAll('.person.expanded, .team.expanded').forEach(p => {
+                        p.classList.remove('expanded');
+                    });
+                    children.querySelectorAll('.connector').forEach(c => {
+                        c.style.display = 'none';
+                    });
+                    children.querySelectorAll('.children').forEach(c => {
+                        c.classList.remove('visible');
+                    });
+                } else {
+                    teamEl.classList.add('expanded');
+                    connector.style.display = 'block';
+                    children.classList.add('visible');
+                    updateHorizontalLine(children);
+                }
+            });
+
+            return node;
+        }
+
+        function createRootNode(data) {
+            const node = document.createElement('div');
+            node.className = 'node';
+
+            const personEl = document.createElement('div');
+            personEl.className = 'person';
+
+            const nameEl = document.createElement('div');
+            nameEl.className = 'name';
+            nameEl.textContent = data.name;
+
+            const roleEl = document.createElement('div');
+            roleEl.className = 'role';
+            roleEl.textContent = data.role;
+
+            personEl.appendChild(nameEl);
+            personEl.appendChild(roleEl);
+            node.appendChild(personEl);
+
+            if (data.teams && data.teams.length > 0) {
+                const connector = document.createElement('div');
+                connector.className = 'connector';
+                node.appendChild(connector);
+
+                const children = document.createElement('div');
+                children.className = 'children visible';
+
+                data.teams.forEach(team => {
+                    const branch = document.createElement('div');
+                    branch.className = 'child-branch';
+                    
+                    const branchConnector = document.createElement('div');
+                    branchConnector.className = 'connector';
+                    branch.appendChild(branchConnector);
+                    
+                    const teamNode = createTeamNode(team);
+                    branch.appendChild(teamNode);
+                    children.appendChild(branch);
+                });
+
+                node.appendChild(children);
+
+                setTimeout(() => updateHorizontalLine(children), 100);
+            }
+
+            return node;
+        }
+
+        // Build the chart
+        const chart = document.getElementById('orgChart');
+        chart.appendChild(createRootNode(orgData));
+    </script>
+</body>
+</html>
