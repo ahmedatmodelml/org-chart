@@ -95,12 +95,12 @@
         }
 
         #searchInput {
-            padding: 6px 10px;
+            padding: 8px 12px;
             border: 1px solid var(--slate-200);
-            border-radius: 6px;
-            font-size: 11px;
+            border-radius: 8px;
+            font-size: 13px;
             font-family: inherit;
-            width: 140px;
+            width: 180px;
             outline: none;
             transition: all 0.15s ease;
         }
@@ -135,9 +135,9 @@
         }
 
         .search-result {
-            padding: 8px 10px;
+            padding: 10px 12px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 13px;
             border-bottom: 1px solid var(--slate-100);
         }
 
@@ -156,8 +156,8 @@
 
         .search-result .result-role {
             color: var(--slate-500);
-            font-size: 10px;
-            margin-top: 1px;
+            font-size: 11px;
+            margin-top: 2px;
         }
 
         .person.highlighted {
@@ -212,32 +212,32 @@
         .person {
             background: var(--white);
             border: 1px solid var(--slate-200);
-            border-radius: 6px;
-            padding: 8px 12px;
-            min-width: 70px;
+            border-radius: 10px;
+            padding: 14px 20px;
+            min-width: 100px;
             text-align: center;
             position: relative;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             user-select: none;
             transition: all 0.2s ease;
         }
 
         .person:hover {
             border-color: var(--slate-300);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
         }
 
         .person .name {
-            font-size: 11px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--slate-900);
             letter-spacing: -0.01em;
         }
 
         .person .role {
-            font-size: 9px;
+            font-size: 11px;
             color: var(--slate-500);
-            margin-top: 2px;
+            margin-top: 3px;
             font-weight: 500;
             text-transform: uppercase;
             letter-spacing: 0.02em;
@@ -247,21 +247,21 @@
         .team {
             background: var(--slate-900);
             border: 1px solid var(--slate-800);
-            border-radius: 6px;
-            padding: 8px 14px;
-            min-width: 90px;
+            border-radius: 10px;
+            padding: 14px 24px;
+            min-width: 130px;
             text-align: center;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+            box-shadow: 0 3px 10px rgba(15, 23, 42, 0.15);
             user-select: none;
             transition: all 0.2s ease;
             -webkit-tap-highlight-color: transparent;
         }
 
         .team:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.16);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
         }
 
         .team:active {
@@ -275,19 +275,19 @@
         .team::after {
             content: '+';
             position: absolute;
-            bottom: -8px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--white);
             color: var(--slate-900);
-            width: 16px;
-            height: 16px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
-            font-size: 11px;
-            line-height: 14px;
+            font-size: 14px;
+            line-height: 18px;
             font-weight: 600;
             transition: all 0.2s ease;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .team.expanded::after {
@@ -295,16 +295,16 @@
         }
 
         .team .name {
-            font-size: 10px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--white);
             letter-spacing: -0.01em;
         }
 
         .team .count {
-            font-size: 9px;
+            font-size: 11px;
             color: var(--slate-400);
-            margin-top: 2px;
+            margin-top: 3px;
             font-weight: 500;
         }
 
@@ -314,7 +314,7 @@
 
         .connector {
             width: 1px;
-            height: 16px;
+            height: 24px;
             background: var(--slate-300);
             transition: all 0.3s ease;
             flex-shrink: 0;
@@ -322,9 +322,9 @@
 
         .children {
             display: inline-flex;
-            gap: 8px;
+            gap: 16px;
             position: relative;
-            padding-top: 16px;
+            padding-top: 24px;
             transition: all 0.4s ease;
             justify-content: center;
         }
@@ -352,7 +352,7 @@
         }
 
         .child-branch > .connector {
-            height: 16px;
+            height: 24px;
         }
 
         /* Dotted line for staff roles */
@@ -474,110 +474,110 @@
         /* Tablet and up */
         @media (min-width: 768px) {
             .header {
-                padding: 14px 28px;
+                padding: 16px 32px;
             }
 
             .logo-icon {
-                width: 26px;
-                height: 26px;
+                width: 30px;
+                height: 30px;
             }
 
             .logo-icon svg {
-                width: 14px;
-                height: 14px;
+                width: 16px;
+                height: 16px;
             }
 
             .logo-text {
-                font-size: 15px;
+                font-size: 17px;
             }
 
             h1 {
                 display: block;
-                font-size: 13px;
+                font-size: 15px;
             }
 
             .canvas {
-                padding: 100px 40px 40px 40px;
+                padding: 120px 50px 50px 50px;
             }
 
             .person {
-                padding: 10px 14px;
-                min-width: 80px;
-                border-radius: 6px;
+                padding: 18px 26px;
+                min-width: 120px;
+                border-radius: 12px;
             }
 
             .person .name {
-                font-size: 11px;
+                font-size: 15px;
             }
 
             .person .role {
-                font-size: 9px;
-                margin-top: 2px;
+                font-size: 12px;
+                margin-top: 4px;
             }
 
             .team {
-                padding: 10px 16px;
-                min-width: 100px;
-                border-radius: 6px;
+                padding: 18px 30px;
+                min-width: 160px;
+                border-radius: 12px;
             }
 
             .team::after {
-                width: 16px;
-                height: 16px;
-                font-size: 11px;
-                line-height: 14px;
-                bottom: -8px;
+                width: 24px;
+                height: 24px;
+                font-size: 16px;
+                line-height: 22px;
+                bottom: -12px;
             }
 
             .team .name {
-                font-size: 10px;
+                font-size: 14px;
             }
 
             .team .count {
-                font-size: 9px;
-                margin-top: 2px;
+                font-size: 12px;
+                margin-top: 4px;
             }
 
             .connector {
-                height: 20px;
+                height: 32px;
             }
 
             .children {
-                gap: 12px;
-                padding-top: 20px;
+                gap: 24px;
+                padding-top: 32px;
             }
 
             .child-branch > .connector {
-                height: 20px;
+                height: 32px;
             }
 
             .controls {
-                bottom: 20px;
-                right: 20px;
-                gap: 6px;
+                bottom: 24px;
+                right: 24px;
+                gap: 8px;
             }
 
             .controls button {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-                border-radius: 8px;
+                width: 42px;
+                height: 42px;
+                font-size: 18px;
+                border-radius: 10px;
             }
 
             .zoom-level {
-                font-size: 10px;
-            }
-
-            .legend {
-                bottom: 20px;
-                left: 20px;
-                padding: 10px 14px;
                 font-size: 11px;
             }
 
+            .legend {
+                bottom: 24px;
+                left: 24px;
+                padding: 12px 16px;
+                font-size: 12px;
+            }
+
             .legend kbd {
-                font-size: 10px;
-                padding: 2px 5px;
+                font-size: 11px;
+                padding: 3px 6px;
             }
         }
 
@@ -596,33 +596,33 @@
         /* Small phones */
         @media (max-width: 374px) {
             .person {
-                padding: 6px 8px;
-                min-width: 56px;
+                padding: 10px 14px;
+                min-width: 80px;
             }
 
             .person .name {
-                font-size: 9px;
+                font-size: 12px;
             }
 
             .person .role {
-                font-size: 7px;
-            }
-
-            .team {
-                padding: 6px 10px;
-                min-width: 70px;
-            }
-
-            .team .name {
                 font-size: 9px;
             }
 
+            .team {
+                padding: 10px 16px;
+                min-width: 100px;
+            }
+
+            .team .name {
+                font-size: 11px;
+            }
+
             .team .count {
-                font-size: 7px;
+                font-size: 9px;
             }
 
             .children {
-                gap: 6px;
+                gap: 10px;
             }
 
             .legend {
