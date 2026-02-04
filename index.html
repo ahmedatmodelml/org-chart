@@ -352,6 +352,41 @@
             border-color: var(--slate-300);
         }
 
+        /* Assistant positioned next to person */
+        .person-with-assistant {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .person-with-assistant > .person-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .person.assistant {
+            padding: 8px 12px;
+            min-width: auto;
+            border-style: dashed;
+            border-color: var(--slate-300);
+        }
+
+        .person.assistant .name {
+            font-size: 12px;
+        }
+
+        .person.assistant .role {
+            font-size: 9px;
+        }
+
+        .assistant-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
         /* Controls */
         .controls {
             position: fixed;
@@ -763,9 +798,7 @@
                 {
                     name: 'Adam',
                     role: 'COO',
-                    staff: [
-                        { name: 'Jill', role: 'EA / NY Office Manager', reports: [] }
-                    ],
+                    assistant: { name: 'Jill', role: 'EA / NY Office Manager' },
                     teams: [
                         {
                             name: 'Engagement',
@@ -1128,6 +1161,87 @@
             const node = document.createElement('div');
             node.className = 'node';
 
+            // Check if person has an assistant (renders side-by-side)
+            const hasAssistant = person.assistant;
+            const hasTeams = person.teams && person.teams.length > 0;
+
+            if (hasAssistant) {
+                // Create wrapper for side-by-side layout
+                const pairWrapper = document.createElement('div');
+                pairWrapper.className = 'person-with-assistant';
+
+                // Main person wrapper (will contain person + their children)
+                const personWrapper = document.createElement('div');
+                personWrapper.className = 'person-wrapper';
+
+                const personEl = document.createElement('div');
+                personEl.className = 'person';
+
+                const nameEl = document.createElement('div');
+                nameEl.className = 'name';
+                nameEl.textContent = person.name;
+
+                const roleEl = document.createElement('div');
+                roleEl.className = 'role';
+                roleEl.textContent = person.role;
+
+                personEl.appendChild(nameEl);
+                personEl.appendChild(roleEl);
+                personWrapper.appendChild(personEl);
+
+                // Add teams under the main person
+                if (hasTeams) {
+                    const connector = document.createElement('div');
+                    connector.className = 'connector';
+                    personWrapper.appendChild(connector);
+
+                    const children = document.createElement('div');
+                    children.className = 'children';
+
+                    person.teams.forEach(team => {
+                        const branch = document.createElement('div');
+                        branch.className = 'child-branch';
+                        
+                        const branchConnector = document.createElement('div');
+                        branchConnector.className = 'connector';
+                        branch.appendChild(branchConnector);
+                        
+                        const teamNode = createTeamNode(team);
+                        branch.appendChild(teamNode);
+                        children.appendChild(branch);
+                    });
+
+                    personWrapper.appendChild(children);
+                    setTimeout(() => updateHorizontalLine(children), 10);
+                }
+
+                pairWrapper.appendChild(personWrapper);
+
+                // Assistant wrapper (small box next to main person)
+                const assistantWrapper = document.createElement('div');
+                assistantWrapper.className = 'assistant-wrapper';
+
+                const assistantEl = document.createElement('div');
+                assistantEl.className = 'person assistant';
+
+                const assistantNameEl = document.createElement('div');
+                assistantNameEl.className = 'name';
+                assistantNameEl.textContent = person.assistant.name;
+
+                const assistantRoleEl = document.createElement('div');
+                assistantRoleEl.className = 'role';
+                assistantRoleEl.textContent = person.assistant.role;
+
+                assistantEl.appendChild(assistantNameEl);
+                assistantEl.appendChild(assistantRoleEl);
+                assistantWrapper.appendChild(assistantEl);
+
+                pairWrapper.appendChild(assistantWrapper);
+                node.appendChild(pairWrapper);
+
+                return node;
+            }
+
             const personEl = document.createElement('div');
             personEl.className = 'person' + (isDotted ? ' staff' : '');
 
@@ -1144,7 +1258,6 @@
             node.appendChild(personEl);
 
             // Check for teams or staff (like Adam has)
-            const hasTeams = person.teams && person.teams.length > 0;
             const hasStaff = person.staff && person.staff.length > 0;
             
             if (hasTeams || hasStaff) {
@@ -1396,6 +1509,7 @@
             if (obj.name && obj.role) {
                 allPeople.push({ name: obj.name, role: obj.role, path: [...path, obj.name] });
             }
+            if (obj.assistant) collectPeople(obj.assistant, [...path, obj.name]);
             if (obj.staff) obj.staff.forEach(s => collectPeople(s, [...path, obj.name]));
             if (obj.reports) obj.reports.forEach(r => collectPeople(r, [...path, obj.name]));
             if (obj.teams) obj.teams.forEach(t => {
