@@ -384,25 +384,34 @@
             justify-content: flex-start;
         }
 
+        /* Header Layout */
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
         /* Header Controls */
         .header-controls {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 4px;
         }
 
         .header-controls button {
-            padding: 6px 12px;
+            width: 32px;
+            height: 32px;
+            padding: 0;
             border: 1px solid var(--slate-200);
             border-radius: 6px;
             background: var(--white);
             color: var(--slate-700);
-            font-size: 12px;
-            font-family: inherit;
-            font-weight: 500;
+            font-size: 16px;
             cursor: pointer;
             transition: all 0.2s ease;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .header-controls button:hover {
@@ -411,32 +420,14 @@
         }
 
         .header-controls button:active {
-            transform: scale(0.97);
+            transform: scale(0.95);
             background: var(--slate-100);
-        }
-
-        .zoom-controls {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin: 0 4px;
-        }
-
-        .zoom-controls button {
-            width: 28px;
-            height: 28px;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 600;
         }
 
         .zoom-level {
             font-size: 11px;
             color: var(--slate-500);
-            min-width: 40px;
+            min-width: 38px;
             text-align: center;
             font-weight: 600;
             color: var(--slate-500);
@@ -536,18 +527,18 @@
             }
 
             .header-controls button {
-                padding: 8px 14px;
-                font-size: 13px;
+                width: 36px;
+                height: 36px;
+                font-size: 18px;
             }
 
-            .zoom-controls button {
-                width: 32px;
-                height: 32px;
+            .header-controls {
+                gap: 6px;
             }
 
             .zoom-level {
                 font-size: 12px;
-                min-width: 45px;
+                min-width: 42px;
             }
         }
 
@@ -596,19 +587,22 @@
             }
 
             .header-controls button {
-                padding: 4px 8px;
-                font-size: 10px;
+                width: 26px;
+                height: 26px;
+                font-size: 12px;
             }
 
-            .zoom-controls button {
-                width: 24px;
-                height: 24px;
-                font-size: 12px;
+            .header-controls {
+                gap: 2px;
             }
 
             .zoom-level {
                 font-size: 9px;
-                min-width: 30px;
+                min-width: 28px;
+            }
+
+            .header-left {
+                gap: 8px;
             }
         }
 
@@ -627,30 +621,35 @@
             }
 
             .header-controls button {
-                padding: 4px 8px;
-                font-size: 10px;
+                width: 28px;
+                height: 28px;
+                font-size: 14px;
             }
 
             .header-controls {
-                gap: 4px;
+                gap: 3px;
+            }
+
+            .header-left {
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="logo">
-            <img src="logo.png" alt="Model ML" class="logo-img">
-        </div>
-        <div class="header-controls">
-            <button id="expandAll" aria-label="Expand all">Expand All</button>
-            <button id="collapseAll" aria-label="Collapse all">Collapse All</button>
-            <div class="zoom-controls">
-                <button id="zoomOut" aria-label="Zoom out">−</button>
-                <span class="zoom-level" id="zoomLevel">100%</span>
-                <button id="zoomIn" aria-label="Zoom in">+</button>
+        <div class="header-left">
+            <div class="logo">
+                <img src="logo.png" alt="Model ML" class="logo-img">
             </div>
-            <button id="resetView" aria-label="Reset view">Reset View</button>
+            <div class="header-controls">
+                <button id="expandAll" aria-label="Expand all" title="Expand all">⊞</button>
+                <button id="collapseAll" aria-label="Collapse all" title="Collapse all">⊟</button>
+                <button id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
+                <span class="zoom-level" id="zoomLevel">100%</span>
+                <button id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
+                <button id="resetView" aria-label="Reset view" title="Reset view">⌂</button>
+            </div>
         </div>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search name..." autocomplete="off">
