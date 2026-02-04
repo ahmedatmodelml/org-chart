@@ -586,15 +586,15 @@
         }
 
         function loadModel() {
-            // Model ML org data in GoJS TreeModel format (with Slack IDs and photos)
+            // Model ML org data in GoJS TreeModel format (with Slack IDs and local photos)
             const nodeDataArray = [
                 // CEO
-                { key: 1, name: 'Chaz', title: 'CEO', slackId: 'U06CVER6SAY', photo: 'https://secure.gravatar.com/avatar/876dd7605d46f9bacd05b2618925eb55.jpg?s=192' },
+                { key: 1, name: 'Chaz', title: 'CEO', slackId: 'U06CVER6SAY', photo: 'photos/U06CVER6SAY.jpg' },
                 
                 // Chiefs (direct reports to CEO)
-                { key: 2, name: 'Arnie', title: 'CTO', parent: 1, slackId: 'U06CQ3Q2Y9K', photo: 'https://avatars.slack-edge.com/2024-03-29/6908283149648_dc80fe0f3eb86ab78950_192.jpg' },
-                { key: 3, name: 'Adam', title: 'COO', parent: 1, slackId: 'U08KJMY4STT', photo: 'https://avatars.slack-edge.com/2025-04-12/8748616491028_d27c20538ed782794526_192.png' },
-                { key: 100, name: 'Nat', title: 'Chief of Staff', parent: 1, slackId: 'U06CQ3Q55HB', photo: 'https://secure.gravatar.com/avatar/7521dd0ead9d75dd553b9ccba1ef0c0c.jpg?s=192' },
+                { key: 2, name: 'Arnie', title: 'CTO', parent: 1, slackId: 'U06CQ3Q2Y9K', photo: 'photos/U06CQ3Q2Y9K.jpg' },
+                { key: 3, name: 'Adam', title: 'COO', parent: 1, slackId: 'U08KJMY4STT', photo: 'photos/U08KJMY4STT.jpg' },
+                { key: 100, name: 'Nat', title: 'Chief of Staff', parent: 1, slackId: 'U06CQ3Q55HB', photo: 'photos/U06CQ3Q55HB.jpg' },
                 
                 // Spacer for functional teams under Chaz
                 { key: 999, name: '', title: '', parent: 1, category: 'hidden', isTreeExpanded: true },
@@ -603,24 +603,24 @@
                 
                 // Strategy Team
                 { key: 'T_STRATEGY', name: 'Strategy', category: 'team', parent: 999 },
-                { key: 4, name: 'Ahmed', title: 'Special Projects', parent: 'T_STRATEGY', slackId: 'U07CFJX5T0Q', photo: 'https://avatars.slack-edge.com/2025-09-21/9555980477650_8923cfdbe17fdc65356f_192.png' },
-                { key: 5, name: 'Kesh', title: 'Data', parent: 4, slackId: 'U07U70FDBJ9', photo: 'https://avatars.slack-edge.com/2024-11-01/7969521352226_9cf4a403d30c61a5325c_192.jpg' },
+                { key: 4, name: 'Ahmed', title: 'Special Projects', parent: 'T_STRATEGY', slackId: 'U07CFJX5T0Q', photo: 'photos/U07CFJX5T0Q.jpg' },
+                { key: 5, name: 'Kesh', title: 'Data', parent: 4, slackId: 'U07U70FDBJ9', photo: 'photos/U07U70FDBJ9.jpg' },
                 
                 // Sales Team
                 { key: 'T_SALES', name: 'Sales', category: 'team', parent: 999 },
-                { key: 6, name: 'Jonny', title: 'EMEA IB', parent: 'T_SALES', slackId: 'U09BY5WEKL6', photo: 'https://avatars.slack-edge.com/2025-09-19/9545938262501_62de23e7e2e6bfbb6c6a_192.png' },
-                { key: 7, name: 'Philip', title: 'EMEA PE', parent: 6, slackId: 'U0A9J4WM2SZ', photo: 'https://avatars.slack-edge.com/2026-01-20/10331312175266_e3fd1518f13cada592e0_192.png' },
-                { key: 8, name: 'Eli', title: 'US IB', parent: 6, slackId: 'U07Q6SRHQ0J', photo: 'https://avatars.slack-edge.com/2024-10-12/7864185890806_14605e0a6b6dc568fb53_192.jpg' },
-                { key: 9, name: 'Steven', title: 'Sales', parent: 6, slackId: 'U0A574XPETC', photo: 'https://avatars.slack-edge.com/2026-01-06/10240793994114_d1e725d697a2268ba81a_192.png' },
-                { key: 10, name: 'Rags', title: 'Global Consulting', parent: 'T_SALES', slackId: 'U08RYGS7TRA', photo: 'https://secure.gravatar.com/avatar/c627a97abd306feb246a6a075775b2eb.jpg?s=192' },
+                { key: 6, name: 'Jonny', title: 'EMEA IB', parent: 'T_SALES', slackId: 'U09BY5WEKL6', photo: 'photos/U09BY5WEKL6.jpg' },
+                { key: 7, name: 'Philip', title: 'EMEA PE', parent: 6, slackId: 'U0A9J4WM2SZ', photo: 'photos/U0A9J4WM2SZ.jpg' },
+                { key: 8, name: 'Eli', title: 'US IB', parent: 6, slackId: 'U07Q6SRHQ0J', photo: 'photos/U07Q6SRHQ0J.jpg' },
+                { key: 9, name: 'Steven', title: 'Sales', parent: 6, slackId: 'U0A574XPETC', photo: 'photos/U0A574XPETC.jpg' },
+                { key: 10, name: 'Rags', title: 'Global Consulting', parent: 'T_SALES', slackId: 'U08RYGS7TRA', photo: 'photos/U08RYGS7TRA.jpg' },
                 
                 // Marketing Team
                 { key: 'T_MARKETING', name: 'Marketing', category: 'team', parent: 999 },
-                { key: 11, name: 'Sid', title: 'Marketing', parent: 'T_MARKETING', slackId: 'U098W8SE603', photo: 'https://avatars.slack-edge.com/2025-09-19/9532414304119_6fbf0ba97c18280d2fdc_192.jpg' },
+                { key: 11, name: 'Sid', title: 'Marketing', parent: 'T_MARKETING', slackId: 'U098W8SE603', photo: 'photos/U098W8SE603.jpg' },
                 
                 // Legal Team
                 { key: 'T_LEGAL', name: 'Legal', category: 'team', parent: 999 },
-                { key: 12, name: 'Eli B', title: 'Legal', parent: 'T_LEGAL', slackId: 'U09F6KZUC9M', photo: 'https://secure.gravatar.com/avatar/afa3ed6ab5dfe450be38ebf00bdf7181.jpg?s=192' },
+                { key: 12, name: 'Eli B', title: 'Legal', parent: 'T_LEGAL', slackId: 'U09F6KZUC9M', photo: 'photos/U09F6KZUC9M.jpg' },
                 
                 // ========== TEAMS UNDER ARNIE ==========
                 
@@ -631,93 +631,93 @@
                 
                 // Product Team
                 { key: 'T_PRODUCT', name: 'Product', category: 'team', parent: 2 },
-                { key: 22, name: 'Alex', title: 'Product', parent: 'T_PRODUCT', slackId: 'U09N7LG3BHB', photo: 'https://secure.gravatar.com/avatar/f2c881a424ebddbb4787d7d0df7bcadf.jpg?s=192' },
-                { key: 23, name: 'Marta', title: 'Product', parent: 'T_PRODUCT', slackId: 'U0A1SL4P2ET', photo: 'https://avatars.slack-edge.com/2025-12-11/10099046658614_8948e0e421ece4c757fa_192.jpg' },
-                { key: 24, name: 'Joseph', title: 'Product', parent: 'T_PRODUCT', slackId: 'U087B84DHSN', photo: 'https://avatars.slack-edge.com/2025-03-24/8661415506465_fa35f650d5c2c3af9426_192.png' },
-                { key: 25, name: 'Miquel', title: 'Product', parent: 'T_PRODUCT', slackId: 'U0AAS45RWDQ', photo: 'https://secure.gravatar.com/avatar/ab57e855e5bbc2367aba181a32f9a746.jpg?s=192' },
+                { key: 22, name: 'Alex', title: 'Product', parent: 'T_PRODUCT', slackId: 'U09N7LG3BHB', photo: 'photos/U09N7LG3BHB.jpg' },
+                { key: 23, name: 'Marta', title: 'Product', parent: 'T_PRODUCT', slackId: 'U0A1SL4P2ET', photo: 'photos/U0A1SL4P2ET.jpg' },
+                { key: 24, name: 'Joseph', title: 'Product', parent: 'T_PRODUCT', slackId: 'U087B84DHSN', photo: 'photos/U087B84DHSN.jpg' },
+                { key: 25, name: 'Miquel', title: 'Product', parent: 'T_PRODUCT', slackId: 'U0AAS45RWDQ', photo: 'photos/U0AAS45RWDQ.jpg' },
                 
                 // Engineering Team
                 { key: 'T_ENGINEERING', name: 'Engineering', category: 'team', parent: 2 },
-                { key: 30, name: 'Mark', title: 'Head of Engineering', parent: 'T_ENGINEERING', slackId: 'U0ACV721P8R', photo: 'https://avatars.slack-edge.com/2026-02-04/10439662384722_33e35c10cac6adca064a_192.jpg' },
-                { key: 31, name: 'James', title: 'Head of AI', parent: 'T_ENGINEERING', slackId: 'U09GGBSLUUS', photo: 'https://avatars.slack-edge.com/2025-09-22/9560984596678_f4f508e92317ccbc0f63_192.jpg' },
-                { key: 32, name: 'Roman', title: 'Engineer', parent: 30, slackId: 'U070PHTLTT4', photo: 'https://avatars.slack-edge.com/2024-07-11/7402461477094_089e601d6bf84eb4c9bd_192.png' },
-                { key: 33, name: 'Chester', title: 'Engineer', parent: 30, slackId: 'U08KGB5F22F', photo: 'https://avatars.slack-edge.com/2025-04-01/8690861307090_faaef409792afaa82d48_192.png' },
-                { key: 34, name: 'Imdad', title: 'Engineer', parent: 30, slackId: 'U09FMSKD679', photo: 'https://avatars.slack-edge.com/2025-10-18/9751298789360_263d36c7ecbadabc117c_192.png' },
-                { key: 35, name: 'Ahmet', title: 'Engineer', parent: 30, slackId: 'U09AHN62QHY', photo: 'https://avatars.slack-edge.com/2025-08-16/9362816061538_bbba4def4eedf473eb69_192.jpg' },
-                { key: 36, name: 'Mohit', title: 'Engineer', parent: 30, slackId: 'U087F5G03GR', photo: 'https://avatars.slack-edge.com/2025-02-04/8399336461268_11b6d106e3fbc53d5168_192.png' },
-                { key: 37, name: 'Dominic', title: 'Engineer', parent: 30, slackId: 'U0A2K1X6WU9', photo: 'https://avatars.slack-edge.com/2026-02-04/10451910606737_506b2eae857c9515eed5_192.jpg' },
+                { key: 30, name: 'Mark', title: 'Head of Engineering', parent: 'T_ENGINEERING', slackId: 'U0ACV721P8R', photo: 'photos/U0ACV721P8R.jpg' },
+                { key: 31, name: 'James', title: 'Head of AI', parent: 'T_ENGINEERING', slackId: 'U09GGBSLUUS', photo: 'photos/U09GGBSLUUS.jpg' },
+                { key: 32, name: 'Roman', title: 'Engineer', parent: 30, slackId: 'U070PHTLTT4', photo: 'photos/U070PHTLTT4.jpg' },
+                { key: 33, name: 'Chester', title: 'Engineer', parent: 30, slackId: 'U08KGB5F22F', photo: 'photos/U08KGB5F22F.jpg' },
+                { key: 34, name: 'Imdad', title: 'Engineer', parent: 30, slackId: 'U09FMSKD679', photo: 'photos/U09FMSKD679.jpg' },
+                { key: 35, name: 'Ahmet', title: 'Engineer', parent: 30, slackId: 'U09AHN62QHY', photo: 'photos/U09AHN62QHY.jpg' },
+                { key: 36, name: 'Mohit', title: 'Engineer', parent: 30, slackId: 'U087F5G03GR', photo: 'photos/U087F5G03GR.jpg' },
+                { key: 37, name: 'Dominic', title: 'Engineer', parent: 30, slackId: 'U0A2K1X6WU9', photo: 'photos/U0A2K1X6WU9.jpg' },
                 { key: 38, name: 'Simone', title: 'Engineer', parent: 30 },
-                { key: 39, name: 'Ignacio', title: 'Engineer', parent: 30, slackId: 'U0ACCS600FP', photo: 'https://avatars.slack-edge.com/2026-02-03/10443309672321_8ee9487e5dc88d239d37_192.png' },
+                { key: 39, name: 'Ignacio', title: 'Engineer', parent: 30, slackId: 'U0ACCS600FP', photo: 'photos/U0ACCS600FP.jpg' },
                 { key: 40, name: 'Ed', title: 'Engineer', parent: 30 },
-                { key: 41, name: 'Maurits', title: 'Engineer', parent: 30, slackId: 'U0ABAQAM8EM', photo: 'https://avatars.slack-edge.com/2026-01-26/10400777626288_e2bca8feaf681c0cf70b_192.jpg' },
-                { key: 42, name: 'Sergey', title: 'Engineer', parent: 30, slackId: 'U09K0NT2V88', photo: 'https://secure.gravatar.com/avatar/7a3827412dbb45836317ea4708ed46a8.jpg?s=192' },
-                { key: 43, name: 'Danish', title: 'Engineer', parent: 32, slackId: 'U0A7W2G2Z08', photo: 'https://avatars.slack-edge.com/2026-01-12/10307962535600_1f6f37d1d0d840f9e00f_192.jpg' },
+                { key: 41, name: 'Maurits', title: 'Engineer', parent: 30, slackId: 'U0ABAQAM8EM', photo: 'photos/U0ABAQAM8EM.jpg' },
+                { key: 42, name: 'Sergey', title: 'Engineer', parent: 30, slackId: 'U09K0NT2V88', photo: 'photos/U09K0NT2V88.jpg' },
+                { key: 43, name: 'Danish', title: 'Engineer', parent: 32, slackId: 'U0A7W2G2Z08', photo: 'photos/U0A7W2G2Z08.jpg' },
                 { key: 44, name: 'Manideep', title: 'Engineer', parent: 32 },
-                { key: 45, name: 'Luke', title: 'Engineer', parent: 32, slackId: 'U0A3X5P3831', photo: 'https://avatars.slack-edge.com/2025-12-18/10153107352580_6a6d028b11959c27f2a1_192.png' },
+                { key: 45, name: 'Luke', title: 'Engineer', parent: 32, slackId: 'U0A3X5P3831', photo: 'photos/U0A3X5P3831.jpg' },
                 { key: 46, name: 'Ashish', title: 'Engineer', parent: 32 },
-                { key: 47, name: 'Darshan', title: 'Engineer', parent: 33, slackId: 'U09GGDQJAQL', photo: 'https://avatars.slack-edge.com/2025-09-22/9553744752227_d11c5fdd1922831fddbb_192.png' },
+                { key: 47, name: 'Darshan', title: 'Engineer', parent: 33, slackId: 'U09GGDQJAQL', photo: 'photos/U09GGDQJAQL.jpg' },
                 
                 // ========== TEAMS UNDER ADAM ==========
                 
-                { key: 13, name: 'Jill', title: 'EA / NY Office Manager', parent: 3, slackId: 'U0A68N21PLK', photo: 'https://secure.gravatar.com/avatar/9a5c4a9cd326de8fb76cdee3e95cf71d.jpg?s=192' },
+                { key: 13, name: 'Jill', title: 'EA / NY Office Manager', parent: 3, slackId: 'U0A68N21PLK', photo: 'photos/U0A68N21PLK.jpg' },
                 
                 // Engagement Team
                 { key: 'T_ENGAGEMENT', name: 'Engagement', category: 'team', parent: 3 },
-                { key: 50, name: 'Ben', title: 'US IB Lead', parent: 'T_ENGAGEMENT', slackId: 'U09M3KTDQUW', photo: 'https://secure.gravatar.com/avatar/c95babb30da9640a4a144761144b0853.jpg?s=192' },
-                { key: 51, name: 'Laxmi', title: 'EMEA IB Lead', parent: 'T_ENGAGEMENT', slackId: 'U09A7M5R43Y', photo: 'https://avatars.slack-edge.com/2025-12-05/10047966638679_4e2e74f7255fb24f148c_192.jpg' },
-                { key: 52, name: 'Milan', title: 'EMEA Consulting Lead', parent: 'T_ENGAGEMENT', slackId: 'U08SC5C5XU7', photo: 'https://avatars.slack-edge.com/2025-09-23/9580887200977_3aabfaefb948d47c2b4a_192.jpg' },
-                { key: 53, name: 'Jessie', title: 'Engagement Director', parent: 'T_ENGAGEMENT', slackId: 'U07J18LUDPX', photo: 'https://avatars.slack-edge.com/2024-08-23/7632201306145_da326d0dab11790f78e8_192.png' },
-                { key: 54, name: 'Greg', title: 'Engagement Manager', parent: 50, slackId: 'U09E7PKR01J', photo: 'https://avatars.slack-edge.com/2025-09-22/9556208782582_f96713e1ad04190a86b5_192.png' },
-                { key: 55, name: 'Cam', title: 'Engagement Manager', parent: 50, slackId: 'U0A50P7S343', photo: 'https://avatars.slack-edge.com/2026-01-15/10305151935653_03badf36edc8ccdef3c0_192.png' },
+                { key: 50, name: 'Ben', title: 'US IB Lead', parent: 'T_ENGAGEMENT', slackId: 'U09M3KTDQUW', photo: 'photos/U09M3KTDQUW.jpg' },
+                { key: 51, name: 'Laxmi', title: 'EMEA IB Lead', parent: 'T_ENGAGEMENT', slackId: 'U09A7M5R43Y', photo: 'photos/U09A7M5R43Y.jpg' },
+                { key: 52, name: 'Milan', title: 'EMEA Consulting Lead', parent: 'T_ENGAGEMENT', slackId: 'U08SC5C5XU7', photo: 'photos/U08SC5C5XU7.jpg' },
+                { key: 53, name: 'Jessie', title: 'Engagement Director', parent: 'T_ENGAGEMENT', slackId: 'U07J18LUDPX', photo: 'photos/U07J18LUDPX.jpg' },
+                { key: 54, name: 'Greg', title: 'Engagement Manager', parent: 50, slackId: 'U09E7PKR01J', photo: 'photos/U09E7PKR01J.jpg' },
+                { key: 55, name: 'Cam', title: 'Engagement Manager', parent: 50, slackId: 'U0A50P7S343', photo: 'photos/U0A50P7S343.jpg' },
                 { key: 56, name: 'Atul', title: 'Engagement Manager', parent: 50 },
-                { key: 57, name: 'Anna', title: 'Engagement Manager', parent: 50, slackId: 'U0A8E47NYNN', photo: 'https://secure.gravatar.com/avatar/5339c16252330c817a8c11fa109204c6.jpg?s=192' },
-                { key: 58, name: 'James E', title: 'Engagement Manager', parent: 51, slackId: 'U0A6L9W16PR', photo: 'https://secure.gravatar.com/avatar/9493e0ff15ba00b293e2e6a50518828a.jpg?s=192' },
+                { key: 57, name: 'Anna', title: 'Engagement Manager', parent: 50, slackId: 'U0A8E47NYNN', photo: 'photos/U0A8E47NYNN.jpg' },
+                { key: 58, name: 'James E', title: 'Engagement Manager', parent: 51, slackId: 'U0A6L9W16PR', photo: 'photos/U0A6L9W16PR.jpg' },
                 { key: 59, name: 'Ian', title: 'Engagement Manager', parent: 51 },
-                { key: 60, name: 'Brenda', title: 'Engagement Manager', parent: 52, slackId: 'U09BX4SUTN0', photo: 'https://avatars.slack-edge.com/2025-09-17/9534250752869_bc69cb26775ab43f3897_192.jpg' },
-                { key: 61, name: 'Diogo', title: 'Engagement Manager', parent: 52, slackId: 'U09PDEBHZ26', photo: 'https://secure.gravatar.com/avatar/738679b41a2dd160c2711f79969a0b1f.jpg?s=192' },
-                { key: 62, name: 'Tej', title: 'Engagement Manager', parent: 52, slackId: 'U09EWKR3TLG', photo: 'https://secure.gravatar.com/avatar/2169515d1ec0f71f63f0dd4d54959dcb.jpg?s=192' },
-                { key: 63, name: 'Vaqar', title: 'Engagement Manager', parent: 52, slackId: 'U0A1V6JT2N4', photo: 'https://secure.gravatar.com/avatar/7f26f4efe9f1543cf3ba82873d595bed.jpg?s=192' },
-                { key: 64, name: 'Olly', title: 'Engagement Manager', parent: 52, slackId: 'U0AAYK0299N', photo: 'https://secure.gravatar.com/avatar/654b735803206b29080cc30272aa7172.jpg?s=192' },
-                { key: 65, name: 'Helen', title: 'Engagement Manager', parent: 53, slackId: 'U09GV4GMA1K', photo: 'https://avatars.slack-edge.com/2025-09-26/9594192459908_198f3734cd153a9d17c3_192.jpg' },
+                { key: 60, name: 'Brenda', title: 'Engagement Manager', parent: 52, slackId: 'U09BX4SUTN0', photo: 'photos/U09BX4SUTN0.jpg' },
+                { key: 61, name: 'Diogo', title: 'Engagement Manager', parent: 52, slackId: 'U09PDEBHZ26', photo: 'photos/U09PDEBHZ26.jpg' },
+                { key: 62, name: 'Tej', title: 'Engagement Manager', parent: 52, slackId: 'U09EWKR3TLG', photo: 'photos/U09EWKR3TLG.jpg' },
+                { key: 63, name: 'Vaqar', title: 'Engagement Manager', parent: 52, slackId: 'U0A1V6JT2N4', photo: 'photos/U0A1V6JT2N4.jpg' },
+                { key: 64, name: 'Olly', title: 'Engagement Manager', parent: 52, slackId: 'U0AAYK0299N', photo: 'photos/U0AAYK0299N.jpg' },
+                { key: 65, name: 'Helen', title: 'Engagement Manager', parent: 53, slackId: 'U09GV4GMA1K', photo: 'photos/U09GV4GMA1K.jpg' },
                 
                 // ========== TEAMS UNDER NAT ==========
                 
                 // Ops Team
                 { key: 'T_OPS', name: 'Ops', category: 'team', parent: 100 },
-                { key: 101, name: 'John', title: 'Relationship Manager', parent: 'T_OPS', slackId: 'U09AS9TCAG5', photo: 'https://avatars.slack-edge.com/2025-08-19/9367925809059_694db11d5431e4d96413_192.png' },
-                { key: 102, name: 'Lucy', title: 'EA / UK Office Manager', parent: 'T_OPS', slackId: 'U0A6D2RE12A', photo: 'https://secure.gravatar.com/avatar/501754c00f74435cf85879c3c911aa9c.jpg?s=192' },
-                { key: 103, name: 'Grace', title: 'Chaz PA', parent: 'T_OPS', slackId: 'U09BGSUV59V', photo: 'https://secure.gravatar.com/avatar/e95337f528507f4c4cbad5c3ca74c420.jpg?s=192' },
+                { key: 101, name: 'John', title: 'Relationship Manager', parent: 'T_OPS', slackId: 'U09AS9TCAG5', photo: 'photos/U09AS9TCAG5.jpg' },
+                { key: 102, name: 'Lucy', title: 'EA / UK Office Manager', parent: 'T_OPS', slackId: 'U0A6D2RE12A', photo: 'photos/U0A6D2RE12A.jpg' },
+                { key: 103, name: 'Grace', title: 'Chaz PA', parent: 'T_OPS', slackId: 'U09BGSUV59V', photo: 'photos/U09BGSUV59V.jpg' },
                 
                 // Finance Team
                 { key: 'T_FINANCE', name: 'Finance', category: 'team', parent: 100 },
-                { key: 104, name: 'Harun', title: 'Finance', parent: 'T_FINANCE', slackId: 'U07GBH1PZGU', photo: 'https://secure.gravatar.com/avatar/31ccab4b62be6a1b0b919d9b4ba743da.jpg?s=192' },
+                { key: 104, name: 'Harun', title: 'Finance', parent: 'T_FINANCE', slackId: 'U07GBH1PZGU', photo: 'photos/U07GBH1PZGU.jpg' },
                 
                 // ========== ALPHA TEAM (under Ahmed) ==========
                 
                 { key: 'T_ALPHA', name: 'Alpha', category: 'team', parent: 4 },
-                { key: 71, name: 'Preeti', title: 'Vector', parent: 'T_ALPHA', slackId: 'U096A3X8FM1', photo: 'https://avatars.slack-edge.com/2025-07-22/9232413423013_8f392307d3906c0a26c0_192.png' },
-                { key: 72, name: 'Adarsh', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVCES5U', photo: 'https://avatars.slack-edge.com/2025-10-22/9775233947136_41ed5f7c537cc32b110e_192.png' },
-                { key: 73, name: 'Sashwat', title: 'Vector', parent: 'T_ALPHA', slackId: 'U09LVCNM74L', photo: 'https://avatars.slack-edge.com/2025-10-23/9762014240065_58405255fa60329c64c3_192.png' },
-                { key: 74, name: 'Abhishek', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVAGSAJ', photo: 'https://avatars.slack-edge.com/2025-09-23/9567454221282_f7c344e8fbddd7985ea8_192.png' },
-                { key: 75, name: 'Shash', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVC0EQ6', photo: 'https://avatars.slack-edge.com/2025-09-18/9547199526468_624c20eb9be1c82282c7_192.png' },
-                { key: 76, name: 'Suman', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVDLQ3Y', photo: 'https://avatars.slack-edge.com/2025-09-19/9546346703942_fdb6cce6e0d09554b4c0_192.jpg' },
-                { key: 77, name: 'Vishal', title: 'Alpha', parent: 71, slackId: 'U096A3VE3NF', photo: 'https://avatars.slack-edge.com/2025-07-18/9221093966996_b90eae3f2716899013f1_192.jpg' },
-                { key: 78, name: 'Naveen', title: 'Alpha', parent: 71, slackId: 'U096A408J67', photo: 'https://avatars.slack-edge.com/2025-07-18/9221306561636_cec06c0c4d51439e67e0_192.jpg' },
-                { key: 79, name: 'Anshuman', title: 'Alpha', parent: 71, slackId: 'U0ACEFNB8FL', photo: 'https://secure.gravatar.com/avatar/63ab5cb8b6579df64a36feeeccfe16ea.jpg?s=192' },
-                { key: 80, name: 'Shubi', title: 'Alpha', parent: 72, slackId: 'U09SZCW989M', photo: 'https://secure.gravatar.com/avatar/0a63098c121a3ccee6810cafbf323df2.jpg?s=192' },
-                { key: 81, name: 'Naman', title: 'Alpha', parent: 72, slackId: 'U0A1QKWJAEQ', photo: 'https://secure.gravatar.com/avatar/8e814c03eca1111d6c8259aa62e1f156.jpg?s=192' },
-                { key: 82, name: 'Ritish', title: 'Alpha', parent: 73, slackId: 'U09EN762DM2', photo: 'https://avatars.slack-edge.com/2025-10-01/9619773212612_375abd1f139c330138c1_192.jpg' },
-                { key: 83, name: 'Ayush', title: 'Alpha', parent: 73, slackId: 'U09TBCW7DM3', photo: 'https://avatars.slack-edge.com/2025-11-25/9984024911235_66c4de7e61f87c9247f3_192.jpg' },
-                { key: 84, name: 'Nikhil', title: 'Alpha', parent: 73, slackId: 'U09TES79A1Y', photo: 'https://avatars.slack-edge.com/2025-11-17/9938925951554_382ca42bbbeee04a8e0b_192.png' },
-                { key: 85, name: 'Ajaykumar', title: 'Alpha', parent: 74, slackId: 'U0A55VBGXN1', photo: 'https://secure.gravatar.com/avatar/e079968680b27101eacef192038e4d1d.jpg?s=192' },
-                { key: 86, name: 'Parul', title: 'Alpha', parent: 74, slackId: 'U0A63MR4JSC', photo: 'https://avatars.slack-edge.com/2026-01-28/10386927038741_a2fce2cb0c92da712320_192.png' },
-                { key: 87, name: 'Ushma', title: 'Alpha', parent: 74, slackId: 'U0ABEJL4UDU', photo: 'https://avatars.slack-edge.com/2026-01-29/10397794800148_4583f433076f2cc2dfb0_192.png' },
-                { key: 88, name: 'Soumya', title: 'Alpha', parent: 75, slackId: 'U0A55V9TD1T', photo: 'https://avatars.slack-edge.com/2026-01-05/10244594422993_eb507858bb3cb85099fa_192.jpg' },
-                { key: 89, name: 'Kumar', title: 'Alpha', parent: 75, slackId: 'U0A5D0HGL2Y', photo: 'https://avatars.slack-edge.com/2026-01-15/10303827862594_6e7a35432ac5ab6fe314_192.png' },
-                { key: 90, name: 'Yugant', title: 'Alpha', parent: 75, slackId: 'U0A5D0LCFGC', photo: 'https://avatars.slack-edge.com/2026-01-14/10292351425877_35b2ab5a1fcecd4b16e2_192.jpg' },
-                { key: 91, name: 'Abhishek M', title: 'Alpha', parent: 76, slackId: 'U0ACJ3YGQQ4', photo: 'https://secure.gravatar.com/avatar/ab52a90c676374b2d13b3217e5f5b98e.jpg?s=192' },
-                { key: 92, name: 'Sagar', title: 'Alpha', parent: 76, slackId: 'U0ACJ3UC3CL', photo: 'https://secure.gravatar.com/avatar/7d78a19f4b1e25a40c9288aca270e136.jpg?s=192' },
-                { key: 93, name: 'Gitesh', title: 'Alpha', parent: 76, slackId: 'U0ACEFJJ83U', photo: 'https://secure.gravatar.com/avatar/1358d0e4368de7d83237addbf25e752e.jpg?s=192' }
+                { key: 71, name: 'Preeti', title: 'Vector', parent: 'T_ALPHA', slackId: 'U096A3X8FM1', photo: 'photos/U096A3X8FM1.jpg' },
+                { key: 72, name: 'Adarsh', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVCES5U', photo: 'photos/U099RVCES5U.jpg' },
+                { key: 73, name: 'Sashwat', title: 'Vector', parent: 'T_ALPHA', slackId: 'U09LVCNM74L', photo: 'photos/U09LVCNM74L.jpg' },
+                { key: 74, name: 'Abhishek', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVAGSAJ', photo: 'photos/U099RVAGSAJ.jpg' },
+                { key: 75, name: 'Shash', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVC0EQ6', photo: 'photos/U099RVC0EQ6.jpg' },
+                { key: 76, name: 'Suman', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVDLQ3Y', photo: 'photos/U099RVDLQ3Y.jpg' },
+                { key: 77, name: 'Vishal', title: 'Alpha', parent: 71, slackId: 'U096A3VE3NF', photo: 'photos/U096A3VE3NF.jpg' },
+                { key: 78, name: 'Naveen', title: 'Alpha', parent: 71, slackId: 'U096A408J67', photo: 'photos/U096A408J67.jpg' },
+                { key: 79, name: 'Anshuman', title: 'Alpha', parent: 71, slackId: 'U0ACEFNB8FL', photo: 'photos/U0ACEFNB8FL.jpg' },
+                { key: 80, name: 'Shubi', title: 'Alpha', parent: 72, slackId: 'U09SZCW989M', photo: 'photos/U09SZCW989M.jpg' },
+                { key: 81, name: 'Naman', title: 'Alpha', parent: 72, slackId: 'U0A1QKWJAEQ', photo: 'photos/U0A1QKWJAEQ.jpg' },
+                { key: 82, name: 'Ritish', title: 'Alpha', parent: 73, slackId: 'U09EN762DM2', photo: 'photos/U09EN762DM2.jpg' },
+                { key: 83, name: 'Ayush', title: 'Alpha', parent: 73, slackId: 'U09TBCW7DM3', photo: 'photos/U09TBCW7DM3.jpg' },
+                { key: 84, name: 'Nikhil', title: 'Alpha', parent: 73, slackId: 'U09TES79A1Y', photo: 'photos/U09TES79A1Y.jpg' },
+                { key: 85, name: 'Ajaykumar', title: 'Alpha', parent: 74, slackId: 'U0A55VBGXN1', photo: 'photos/U0A55VBGXN1.jpg' },
+                { key: 86, name: 'Parul', title: 'Alpha', parent: 74, slackId: 'U0A63MR4JSC', photo: 'photos/U0A63MR4JSC.jpg' },
+                { key: 87, name: 'Ushma', title: 'Alpha', parent: 74, slackId: 'U0ABEJL4UDU', photo: 'photos/U0ABEJL4UDU.jpg' },
+                { key: 88, name: 'Soumya', title: 'Alpha', parent: 75, slackId: 'U0A55V9TD1T', photo: 'photos/U0A55V9TD1T.jpg' },
+                { key: 89, name: 'Kumar', title: 'Alpha', parent: 75, slackId: 'U0A5D0HGL2Y', photo: 'photos/U0A5D0HGL2Y.jpg' },
+                { key: 90, name: 'Yugant', title: 'Alpha', parent: 75, slackId: 'U0A5D0LCFGC', photo: 'photos/U0A5D0LCFGC.jpg' },
+                { key: 91, name: 'Abhishek M', title: 'Alpha', parent: 76, slackId: 'U0ACJ3YGQQ4', photo: 'photos/U0ACJ3YGQQ4.jpg' },
+                { key: 92, name: 'Sagar', title: 'Alpha', parent: 76, slackId: 'U0ACJ3UC3CL', photo: 'photos/U0ACJ3UC3CL.jpg' },
+                { key: 93, name: 'Gitesh', title: 'Alpha', parent: 76, slackId: 'U0ACEFJJ83U', photo: 'photos/U0ACEFJJ83U.jpg' }
             ];
 
             myDiagram.model = new go.TreeModel(nodeDataArray);
