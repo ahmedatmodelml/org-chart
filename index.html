@@ -1645,6 +1645,19 @@
                 if (obj.assistant) {
                     hierarchy[obj.name].reports.push({ name: obj.assistant.name, role: obj.assistant.role });
                 }
+                // Include team heads and members as direct reports
+                if (obj.teams) {
+                    obj.teams.forEach(t => {
+                        if (t.head) {
+                            hierarchy[obj.name].reports.push({ name: t.head.name, role: t.head.role });
+                        }
+                        if (t.members) {
+                            t.members.forEach(m => {
+                                hierarchy[obj.name].reports.push({ name: m.name, role: m.role });
+                            });
+                        }
+                    });
+                }
             }
             
             const currentPerson = obj.name || manager;
