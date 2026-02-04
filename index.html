@@ -201,11 +201,13 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             user-select: none;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
 
         .person:hover {
             border-color: var(--slate-300);
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
         }
 
         .person .name {
@@ -434,6 +436,128 @@
             padding: 1px 0;
         }
 
+        /* Person Info Modal */
+        .person-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease;
+        }
+
+        .person-modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .person-modal {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 24px;
+            min-width: 280px;
+            max-width: 360px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            transform: scale(0.95);
+            transition: transform 0.2s ease;
+        }
+
+        .person-modal-overlay.visible .person-modal {
+            transform: scale(1);
+        }
+
+        .person-modal-header {
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        .person-modal-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--slate-900);
+        }
+
+        .person-modal-role {
+            font-size: 13px;
+            color: var(--slate-500);
+            margin-top: 2px;
+        }
+
+        .person-modal-section {
+            margin-bottom: 14px;
+        }
+
+        .person-modal-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .person-modal-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--slate-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .person-modal-value {
+            font-size: 14px;
+            color: var(--slate-700);
+        }
+
+        .person-modal-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .person-modal-list li {
+            font-size: 14px;
+            color: var(--slate-700);
+            padding: 3px 0;
+        }
+
+        .person-modal-none {
+            font-size: 13px;
+            color: var(--slate-400);
+            font-style: italic;
+        }
+
+        .person-modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: var(--slate-100);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--slate-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .person-modal-close:hover {
+            background: var(--slate-200);
+            color: var(--slate-700);
+        }
+
+        .person-modal {
+            position: relative;
+        }
+
         @keyframes nodeAppear {
             from {
                 opacity: 0;
@@ -660,6 +784,24 @@
     <div class="canvas-container" id="container">
         <div class="canvas" id="canvas">
             <div class="org-chart" id="orgChart"></div>
+        </div>
+    </div>
+
+    <div class="person-modal-overlay" id="personModal">
+        <div class="person-modal">
+            <button class="person-modal-close" id="modalClose">×</button>
+            <div class="person-modal-header">
+                <div class="person-modal-name" id="modalName"></div>
+                <div class="person-modal-role" id="modalRole"></div>
+            </div>
+            <div class="person-modal-section">
+                <div class="person-modal-label">Reports to</div>
+                <div class="person-modal-value" id="modalManager"></div>
+            </div>
+            <div class="person-modal-section">
+                <div class="person-modal-label">Direct Reports</div>
+                <div id="modalReports"></div>
+            </div>
         </div>
     </div>
 
@@ -1476,6 +1618,102 @@
             });
         }
         collectPeople(orgData);
+
+        // Build hierarchy map for manager/reports lookup
+        const hierarchy = {};
+        
+        function buildHierarchy(obj, manager = null) {
+            if (obj.name && obj.role) {
+                hierarchy[obj.name] = {
+                    name: obj.name,
+                    role: obj.role,
+                    manager: manager,
+                    reports: []
+                };
+                
+                // Collect direct reports
+                if (obj.reports) {
+                    obj.reports.forEach(r => {
+                        hierarchy[obj.name].reports.push({ name: r.name, role: r.role });
+                    });
+                }
+                if (obj.staff) {
+                    obj.staff.forEach(s => {
+                        hierarchy[obj.name].reports.push({ name: s.name, role: s.role });
+                    });
+                }
+                if (obj.assistant) {
+                    hierarchy[obj.name].reports.push({ name: obj.assistant.name, role: obj.assistant.role });
+                }
+            }
+            
+            const currentPerson = obj.name || manager;
+            
+            if (obj.assistant) buildHierarchy(obj.assistant, obj.name);
+            if (obj.staff) obj.staff.forEach(s => buildHierarchy(s, obj.name));
+            if (obj.reports) obj.reports.forEach(r => buildHierarchy(r, obj.name));
+            if (obj.teams) obj.teams.forEach(t => {
+                if (t.head) buildHierarchy(t.head, obj.name);
+                if (t.members) t.members.forEach(m => buildHierarchy(m, obj.name));
+            });
+        }
+        buildHierarchy(orgData);
+
+        // Person modal functionality
+        const personModal = document.getElementById('personModal');
+        const modalClose = document.getElementById('modalClose');
+        const modalName = document.getElementById('modalName');
+        const modalRole = document.getElementById('modalRole');
+        const modalManager = document.getElementById('modalManager');
+        const modalReports = document.getElementById('modalReports');
+
+        function showPersonModal(name) {
+            const person = hierarchy[name];
+            if (!person) return;
+
+            modalName.textContent = person.name;
+            modalRole.textContent = person.role;
+            
+            if (person.manager) {
+                const mgr = hierarchy[person.manager];
+                modalManager.innerHTML = `<span>${person.manager}</span>${mgr ? ` <span style="color: var(--slate-400)">· ${mgr.role}</span>` : ''}`;
+            } else {
+                modalManager.innerHTML = '<span class="person-modal-none">None</span>';
+            }
+
+            if (person.reports.length > 0) {
+                modalReports.innerHTML = `<ul class="person-modal-list">${person.reports.map(r => 
+                    `<li>${r.name} <span style="color: var(--slate-400)">· ${r.role}</span></li>`
+                ).join('')}</ul>`;
+            } else {
+                modalReports.innerHTML = '<span class="person-modal-none">None</span>';
+            }
+
+            personModal.classList.add('visible');
+        }
+
+        function hidePersonModal() {
+            personModal.classList.remove('visible');
+        }
+
+        modalClose.addEventListener('click', hidePersonModal);
+        personModal.addEventListener('click', (e) => {
+            if (e.target === personModal) hidePersonModal();
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hidePersonModal();
+        });
+
+        // Add click handlers to all person nodes
+        document.addEventListener('click', (e) => {
+            const personEl = e.target.closest('.person:not(.assistant)');
+            if (personEl && !e.target.closest('.team')) {
+                const nameEl = personEl.querySelector('.name');
+                if (nameEl) {
+                    showPersonModal(nameEl.textContent);
+                }
+            }
+        });
 
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
