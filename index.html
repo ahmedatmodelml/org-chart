@@ -192,51 +192,70 @@
 
         .person {
             background: var(--white);
-            border: 1px solid var(--slate-200);
-            border-radius: 10px;
-            padding: 14px 20px;
-            min-width: 100px;
-            text-align: center;
+            border: none;
+            border-radius: 8px;
+            padding: 16px 20px 16px 26px;
+            min-width: 120px;
+            text-align: left;
             position: relative;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
             user-select: none;
             transition: all 0.2s ease;
             cursor: pointer;
+            overflow: hidden;
         }
 
+        /* Colored left stripe based on level */
+        .person::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+            background: var(--level-color, #2672EC);
+            border-radius: 8px 0 0 8px;
+        }
+
+        .person[data-level="0"]::before { background: #AC193D; }
+        .person[data-level="1"]::before { background: #2672EC; }
+        .person[data-level="2"]::before { background: #8C0095; }
+        .person[data-level="3"]::before { background: #5133AB; }
+        .person[data-level="4"]::before { background: #008299; }
+        .person[data-level="5"]::before { background: #D24726; }
+        .person[data-level="6"]::before { background: #008A00; }
+        .person[data-level="7"]::before { background: #094AB2; }
+
         .person:hover {
-            border-color: var(--slate-300);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
         }
 
         .person .name {
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 500;
             color: var(--slate-900);
             letter-spacing: -0.01em;
         }
 
         .person .role {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--slate-500);
-            margin-top: 3px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
+            margin-top: 4px;
+            font-weight: 400;
         }
 
         /* Team node styling */
         .team {
-            background: var(--slate-900);
-            border: 1px solid var(--slate-800);
-            border-radius: 10px;
+            background: var(--slate-800);
+            border: none;
+            border-radius: 8px;
             padding: 14px 24px;
             min-width: 130px;
             text-align: center;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 3px 10px rgba(15, 23, 42, 0.15);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
             user-select: none;
             transition: all 0.2s ease;
             -webkit-tap-highlight-color: transparent;
@@ -244,7 +263,7 @@
 
         .team:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
         }
 
         .team:active {
@@ -252,7 +271,7 @@
         }
 
         .team.expanded {
-            background: var(--slate-800);
+            background: var(--slate-700);
         }
 
         .team::after {
@@ -296,18 +315,19 @@
         }
 
         .connector {
-            width: 1px;
-            height: 24px;
+            width: 2px;
+            height: 28px;
             background: var(--slate-300);
             transition: all 0.3s ease;
             flex-shrink: 0;
+            border-radius: 1px;
         }
 
         .children {
             display: inline-flex;
-            gap: 16px;
+            gap: 20px;
             position: relative;
-            padding-top: 24px;
+            padding-top: 28px;
             transition: all 0.4s ease;
             justify-content: center;
         }
@@ -320,11 +340,12 @@
             content: '';
             position: absolute;
             top: 0;
-            height: 1px;
+            height: 2px;
             background: var(--slate-300);
             left: var(--line-left, 50%);
             width: var(--line-width, 0);
             transition: all 0.3s ease;
+            border-radius: 1px;
         }
 
         .child-branch {
@@ -1252,7 +1273,7 @@
         }
 
         // Person nodes are always expanded - no click to expand
-        function createPersonNode(person, isDotted = false) {
+        function createPersonNode(person, isDotted = false, level = 0) {
             const node = document.createElement('div');
             node.className = 'node';
 
@@ -1271,6 +1292,7 @@
 
                 const personEl = document.createElement('div');
                 personEl.className = 'person';
+                personEl.setAttribute('data-level', level % 8);
 
                 const nameEl = document.createElement('div');
                 nameEl.className = 'name';
@@ -1301,7 +1323,7 @@
                         branchConnector.className = 'connector';
                         branch.appendChild(branchConnector);
                         
-                        const teamNode = createTeamNode(team);
+                        const teamNode = createTeamNode(team, level + 1);
                         branch.appendChild(teamNode);
                         children.appendChild(branch);
                     });
@@ -1323,6 +1345,7 @@
 
                 const assistantEl = document.createElement('div');
                 assistantEl.className = 'person assistant';
+                assistantEl.setAttribute('data-level', level % 8);
 
                 const assistantNameEl = document.createElement('div');
                 assistantNameEl.className = 'name';
@@ -1344,6 +1367,7 @@
 
             const personEl = document.createElement('div');
             personEl.className = 'person' + (isDotted ? ' staff' : '');
+            personEl.setAttribute('data-level', level % 8);
 
             const nameEl = document.createElement('div');
             nameEl.className = 'name';
@@ -1378,7 +1402,7 @@
                         branchConnector.className = 'connector dotted';
                         branch.appendChild(branchConnector);
                         
-                        const childNode = createPersonNode(staffMember, true);
+                        const childNode = createPersonNode(staffMember, true, level + 1);
                         branch.appendChild(childNode);
                         children.appendChild(branch);
                     });
@@ -1394,7 +1418,7 @@
                         branchConnector.className = 'connector';
                         branch.appendChild(branchConnector);
                         
-                        const teamNode = createTeamNode(team);
+                        const teamNode = createTeamNode(team, level + 1);
                         branch.appendChild(teamNode);
                         children.appendChild(branch);
                     });
@@ -1420,7 +1444,7 @@
                     branchConnector.className = 'connector';
                     branch.appendChild(branchConnector);
                     
-                    const childNode = createPersonNode(report);
+                    const childNode = createPersonNode(report, false, level + 1);
                     branch.appendChild(childNode);
                     children.appendChild(branch);
                 });
@@ -1434,7 +1458,7 @@
             return node;
         }
 
-        function createTeamNode(team) {
+        function createTeamNode(team, level = 0) {
             const node = document.createElement('div');
             node.className = 'node';
 
@@ -1470,7 +1494,7 @@
                 branchConnector.className = 'connector';
                 branch.appendChild(branchConnector);
                 
-                const childNode = createPersonNode(team.head);
+                const childNode = createPersonNode(team.head, false, level + 1);
                 branch.appendChild(childNode);
                 children.appendChild(branch);
             } else if (team.members) {
@@ -1486,7 +1510,7 @@
                     }
                     branch.appendChild(branchConnector);
                     
-                    const childNode = createPersonNode(member);
+                    const childNode = createPersonNode(member, false, level + 1);
                     branch.appendChild(childNode);
                     children.appendChild(branch);
                 });
