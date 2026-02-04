@@ -281,6 +281,76 @@
                 })
             );
 
+            // Team node template (same design as people)
+            myDiagram.nodeTemplateMap.add('team',
+                new go.Node(go.Panel.Spot, {
+                    isShadowed: true,
+                    shadowOffset: new go.Point(0, 2),
+                    selectionObjectName: 'BODY'
+                })
+                .add(
+                    new go.Panel(go.Panel.Auto, { name: 'BODY' })
+                        .add(
+                            new go.Shape('RoundedRectangle', {
+                                name: 'SHAPE',
+                                strokeWidth: 0
+                            }).theme('fill', 'background'),
+                            new go.Panel(go.Panel.Table, { 
+                                margin: 0.5,
+                                defaultRowSeparatorStrokeWidth: 0.5
+                            })
+                            .theme('defaultRowSeparatorStroke', 'divider')
+                            .add(
+                                new go.Panel(go.Panel.Table, { 
+                                    padding: new go.Margin(14, 16, 14, 20),
+                                    minSize: new go.Size(180, NaN)
+                                })
+                                .add(
+                                    new go.Panel(go.Panel.Table, {
+                                        column: 0,
+                                        alignment: go.Spot.Left,
+                                        stretch: go.Stretch.Vertical,
+                                        defaultAlignment: go.Spot.Left
+                                    })
+                                    .add(
+                                        new go.TextBlock({
+                                            row: 0,
+                                            minSize: new go.Size(10, 14)
+                                        })
+                                        .bind('text', 'name')
+                                        .theme('stroke', 'text')
+                                        .theme('font', 'name'),
+                                        new go.TextBlock({ 
+                                            row: 1, 
+                                            minSize: new go.Size(10, 14),
+                                            text: 'Team'
+                                        })
+                                        .theme('stroke', 'subtext')
+                                        .theme('font', 'normal')
+                                    )
+                                )
+                            )
+                        ),
+                    // Colored left stripe
+                    new go.Shape('RoundedLeftRectangle', {
+                        alignment: go.Spot.Left,
+                        alignmentFocus: go.Spot.Left,
+                        stretch: go.Stretch.Vertical,
+                        width: 5,
+                        strokeWidth: 0
+                    }).themeObject('fill', '', 'levels', findLevelColor),
+                    // Tree expander button
+                    go.GraphObject.build('TreeExpanderButton', {
+                        _treeExpandedFigure: 'LineUp',
+                        _treeCollapsedFigure: 'LineDown',
+                        alignment: go.Spot.Bottom,
+                        opacity: 0.7
+                    })
+                )
+                .theme('shadowColor', 'shadow')
+                .bindTwoWay('isTreeExpanded')
+            );
+
             // Node template
             myDiagram.nodeTemplate =
                 new go.Node(go.Panel.Spot, {
@@ -357,34 +427,36 @@
                                         defaultAlignment: go.Spot.Left
                                     })
                                     .add(
-                                        new go.Panel(go.Panel.Horizontal, { row: 0 })
-                                            .add(
-                                                new go.TextBlock({
-                                                    minSize: new go.Size(10, 14),
-                                                    margin: new go.Margin(0, 8, 0, 0)
-                                                })
-                                                .bind('text', 'name')
-                                                .theme('stroke', 'text')
-                                                .theme('font', 'name'),
-                                                new go.Panel(go.Panel.Auto, { visible: true })
-                                                    .bind('visible', 'dept', d => !!d)
-                                                    .add(
-                                                        new go.Shape('Capsule', { parameter1: 6, parameter2: 6 })
-                                                            .theme('fill', 'badge')
-                                                            .theme('stroke', 'badgeBorder'),
-                                                        new go.TextBlock({
-                                                            minSize: new go.Size(10, 12),
-                                                            margin: new go.Margin(2, 6)
-                                                        })
-                                                        .bind('text', 'dept')
-                                                        .theme('stroke', 'badgeText')
-                                                        .theme('font', 'badge')
-                                                    )
-                                            ),
+                                        new go.TextBlock({
+                                            row: 0,
+                                            minSize: new go.Size(10, 14)
+                                        })
+                                        .bind('text', 'name')
+                                        .theme('stroke', 'text')
+                                        .theme('font', 'name'),
                                         new go.TextBlock({ row: 1, minSize: new go.Size(10, 14) })
                                             .bind('text', 'title')
                                             .theme('stroke', 'subtext')
-                                            .theme('font', 'normal')
+                                            .theme('font', 'normal'),
+                                        // Slack DM button
+                                        new go.Panel(go.Panel.Horizontal, { 
+                                            row: 2, 
+                                            margin: new go.Margin(8, 0, 0, 0),
+                                            cursor: 'pointer',
+                                            click: (e, obj) => {
+                                                const slackId = obj.part.data.slackId;
+                                                if (slackId) {
+                                                    window.open(`https://slack.com/app_redirect?channel=${slackId}`, '_blank');
+                                                }
+                                            }
+                                        })
+                                        .bind('visible', 'slackId', id => !!id)
+                                        .add(
+                                            new go.TextBlock('💬 Slack', {
+                                                font: '500 11px Inter, sans-serif',
+                                                stroke: '#6366f1'
+                                            })
+                                        )
                                     )
                                 )
                             )
@@ -492,139 +564,138 @@
         }
 
         function loadModel() {
-            // Model ML org data in GoJS TreeModel format
+            // Model ML org data in GoJS TreeModel format (with Slack IDs)
             const nodeDataArray = [
-                // Level 0: CEO
-                { key: 1, name: 'Chaz', title: 'CEO', dept: 'Executive' },
+                // CEO
+                { key: 1, name: 'Chaz', title: 'CEO', slackId: 'U06CVER6SAY' },
                 
-                // Level 1: Chiefs (direct reports to CEO)
-                { key: 2, name: 'Arnie', title: 'CTO', dept: 'Technology', parent: 1 },
-                { key: 3, name: 'Adam', title: 'COO', dept: 'Operations', parent: 1 },
-                { key: 100, name: 'Nat', title: 'Chief of Staff', dept: 'Executive', parent: 1 },
+                // Chiefs (direct reports to CEO)
+                { key: 2, name: 'Arnie', title: 'CTO', parent: 1, slackId: 'U06CQ3Q2Y9K' },
+                { key: 3, name: 'Adam', title: 'COO', parent: 1, slackId: 'U08KJMY4STT' },
+                { key: 100, name: 'Nat', title: 'Chief of Staff', parent: 1, slackId: 'U06CQ3Q55HB' },
                 
-                // Invisible spacer node for functional teams under Chaz (but visually below Chiefs)
-                { key: 999, name: '', title: '', dept: '', parent: 1, category: 'hidden', isTreeExpanded: true },
+                // Spacer for functional teams under Chaz
+                { key: 999, name: '', title: '', parent: 1, category: 'hidden', isTreeExpanded: true },
                 
-                // Nat's Ops team
-                { key: 101, name: 'John', title: 'Relationship Manager', dept: 'Ops', parent: 100 },
-                { key: 102, name: 'Lucy', title: 'EA / UK Office Manager', dept: 'Ops', parent: 100 },
-                { key: 103, name: 'Grace', title: 'Chaz PA', dept: 'Ops', parent: 100 },
+                // ========== TEAMS UNDER CHAZ ==========
                 
-                // Nat's Finance team
-                { key: 104, name: 'Harun', title: 'Finance', dept: 'Finance', parent: 100 },
+                // Strategy Team
+                { key: 'T_STRATEGY', name: 'Strategy', category: 'team', parent: 999 },
+                { key: 4, name: 'Ahmed', title: 'Special Projects', parent: 'T_STRATEGY', slackId: 'U07CFJX5T0Q' },
+                { key: 5, name: 'Kesh', title: 'Data', parent: 4, slackId: 'U07U70FDBJ9' },
                 
-                // Strategy & BI (under Chaz via spacer)
-                { key: 4, name: 'Ahmed', title: 'Special Projects', dept: 'Strategy', parent: 999 },
-                { key: 5, name: 'Kesh', title: 'Data', dept: 'Strategy', parent: 4 },
+                // Sales Team
+                { key: 'T_SALES', name: 'Sales', category: 'team', parent: 999 },
+                { key: 6, name: 'Jonny', title: 'EMEA IB', parent: 'T_SALES', slackId: 'U09BY5WEKL6' },
+                { key: 7, name: 'Philip', title: 'EMEA PE', parent: 6, slackId: 'U0A9J4WM2SZ' },
+                { key: 8, name: 'Eli', title: 'US IB', parent: 6, slackId: 'U07Q6SRHQ0J' },
+                { key: 9, name: 'Steven', title: 'Sales', parent: 6, slackId: 'U0A574XPETC' },
+                { key: 10, name: 'Rags', title: 'Global Consulting', parent: 'T_SALES', slackId: 'U08RYGS7TRA' },
                 
-                // Sales (under Chaz via spacer)
-                { key: 6, name: 'Jonny', title: 'EMEA IB', dept: 'Sales', parent: 999 },
-                { key: 7, name: 'Philip', title: 'EMEA PE', dept: 'Sales', parent: 6 },
-                { key: 8, name: 'Eli', title: 'US IB', dept: 'Sales', parent: 6 },
-                { key: 9, name: 'Steven', title: 'Sales', dept: 'Sales', parent: 6 },
-                { key: 10, name: 'Rags', title: 'Global Consulting', dept: 'Sales', parent: 999 },
+                // Marketing Team
+                { key: 'T_MARKETING', name: 'Marketing', category: 'team', parent: 999 },
+                { key: 11, name: 'Sid', title: 'Marketing', parent: 'T_MARKETING', slackId: 'U098W8SE603' },
                 
-                // Marketing (under Chaz via spacer)
-                { key: 11, name: 'Sid', title: 'Marketing', dept: 'Marketing', parent: 999 },
+                // Legal Team
+                { key: 'T_LEGAL', name: 'Legal', category: 'team', parent: 999 },
+                { key: 12, name: 'Eli B', title: 'Legal', parent: 'T_LEGAL', slackId: 'U09F6KZUC9M' },
                 
-                // Legal (under Chaz via spacer)
-                { key: 12, name: 'Eli B', title: 'Legal', dept: 'Legal', parent: 999 },
+                // ========== TEAMS UNDER ARNIE ==========
                 
-                // Adam's assistant
-                { key: 13, name: 'Jill', title: 'EA / NY Office Manager', dept: 'Operations', parent: 3 },
+                // Design Team
+                { key: 'T_DESIGN', name: 'Design', category: 'team', parent: 2 },
+                { key: 20, name: 'Mayowa', title: 'Designer', parent: 'T_DESIGN' },
+                { key: 21, name: 'Musleh', title: 'Designer', parent: 'T_DESIGN' },
                 
-                // Design (under Arnie)
-                { key: 20, name: 'Mayowa', title: 'Designer', dept: 'Design', parent: 2 },
-                { key: 21, name: 'Musleh', title: 'Designer', dept: 'Design', parent: 2 },
+                // Product Team
+                { key: 'T_PRODUCT', name: 'Product', category: 'team', parent: 2 },
+                { key: 22, name: 'Alex', title: 'Product', parent: 'T_PRODUCT', slackId: 'U09N7LG3BHB' },
+                { key: 23, name: 'Marta', title: 'Product', parent: 'T_PRODUCT', slackId: 'U0A1SL4P2ET' },
+                { key: 24, name: 'Joseph', title: 'Product', parent: 'T_PRODUCT', slackId: 'U087B84DHSN' },
+                { key: 25, name: 'Miquel', title: 'Product', parent: 'T_PRODUCT', slackId: 'U0AAS45RWDQ' },
                 
-                // Product (under Arnie)
-                { key: 22, name: 'Alex', title: 'Product', dept: 'Product', parent: 2 },
-                { key: 23, name: 'Marta', title: 'Product', dept: 'Product', parent: 2 },
-                { key: 24, name: 'Joseph', title: 'Product', dept: 'Product', parent: 2 },
-                { key: 25, name: 'Miquel', title: 'Product', dept: 'Product', parent: 2 },
+                // Engineering Team
+                { key: 'T_ENGINEERING', name: 'Engineering', category: 'team', parent: 2 },
+                { key: 30, name: 'Mark', title: 'Head of Engineering', parent: 'T_ENGINEERING', slackId: 'U0ACV721P8R' },
+                { key: 31, name: 'James', title: 'Head of AI', parent: 'T_ENGINEERING', slackId: 'U09GGBSLUUS' },
+                { key: 32, name: 'Roman', title: 'Engineer', parent: 30, slackId: 'U070PHTLTT4' },
+                { key: 33, name: 'Chester', title: 'Engineer', parent: 30, slackId: 'U08KGB5F22F' },
+                { key: 34, name: 'Imdad', title: 'Engineer', parent: 30, slackId: 'U09FMSKD679' },
+                { key: 35, name: 'Ahmet', title: 'Engineer', parent: 30, slackId: 'U09AHN62QHY' },
+                { key: 36, name: 'Mohit', title: 'Engineer', parent: 30, slackId: 'U087F5G03GR' },
+                { key: 37, name: 'Dominic', title: 'Engineer', parent: 30, slackId: 'U0A2K1X6WU9' },
+                { key: 38, name: 'Simone', title: 'Engineer', parent: 30 },
+                { key: 39, name: 'Ignacio', title: 'Engineer', parent: 30, slackId: 'U0ACCS600FP' },
+                { key: 40, name: 'Ed', title: 'Engineer', parent: 30 },
+                { key: 41, name: 'Maurits', title: 'Engineer', parent: 30, slackId: 'U0ABAQAM8EM' },
+                { key: 42, name: 'Sergey', title: 'Engineer', parent: 30, slackId: 'U09K0NT2V88' },
+                { key: 43, name: 'Danish', title: 'Engineer', parent: 32, slackId: 'U0A7W2G2Z08' },
+                { key: 44, name: 'Manideep', title: 'Engineer', parent: 32 },
+                { key: 45, name: 'Luke', title: 'Engineer', parent: 32, slackId: 'U0A3X5P3831' },
+                { key: 46, name: 'Ashish', title: 'Engineer', parent: 32 },
+                { key: 47, name: 'Darshan', title: 'Engineer', parent: 33, slackId: 'U09GGDQJAQL' },
                 
-                // Engineering (under Arnie)
-                { key: 30, name: 'Mark', title: 'Head of Engineering', dept: 'Engineering', parent: 2 },
-                { key: 31, name: 'James', title: 'Head of AI', dept: 'Engineering', parent: 2 },
-                { key: 32, name: 'Roman', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 33, name: 'Chester', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 34, name: 'Imdad', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 35, name: 'Ahmet', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 36, name: 'Mohit', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 37, name: 'Dominic', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 38, name: 'Simone', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 39, name: 'Ignacio', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 40, name: 'Ed', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 41, name: 'Maurits', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 42, name: 'Sergey', title: 'Engineer', dept: 'Engineering', parent: 30 },
-                { key: 43, name: 'Danish', title: 'Engineer', dept: 'Engineering', parent: 32 },
-                { key: 44, name: 'Manideep', title: 'Engineer', dept: 'Engineering', parent: 32 },
-                { key: 45, name: 'Luke', title: 'Engineer', dept: 'Engineering', parent: 32 },
-                { key: 46, name: 'Ashish', title: 'Engineer', dept: 'Engineering', parent: 32 },
-                { key: 47, name: 'Darshan', title: 'Engineer', dept: 'Engineering', parent: 33 },
+                // ========== TEAMS UNDER ADAM ==========
                 
-                // Engagement (under Adam)
-                { key: 50, name: 'Ben', title: 'US IB Lead', dept: 'Engagement', parent: 3 },
-                { key: 51, name: 'Laxmi', title: 'EMEA IB Lead', dept: 'Engagement', parent: 3 },
-                { key: 52, name: 'Milan', title: 'EMEA Consulting Lead', dept: 'Engagement', parent: 3 },
-                { key: 53, name: 'Jessie', title: 'Engagement Director', dept: 'Engagement', parent: 3 },
+                { key: 13, name: 'Jill', title: 'EA / NY Office Manager', parent: 3, slackId: 'U0A68N21PLK' },
                 
-                // Ben's reports
-                { key: 54, name: 'Greg', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
-                { key: 55, name: 'Cam', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
-                { key: 56, name: 'Atul', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
-                { key: 57, name: 'Anna', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
+                // Engagement Team
+                { key: 'T_ENGAGEMENT', name: 'Engagement', category: 'team', parent: 3 },
+                { key: 50, name: 'Ben', title: 'US IB Lead', parent: 'T_ENGAGEMENT', slackId: 'U09M3KTDQUW' },
+                { key: 51, name: 'Laxmi', title: 'EMEA IB Lead', parent: 'T_ENGAGEMENT', slackId: 'U09A7M5R43Y' },
+                { key: 52, name: 'Milan', title: 'EMEA Consulting Lead', parent: 'T_ENGAGEMENT', slackId: 'U08SC5C5XU7' },
+                { key: 53, name: 'Jessie', title: 'Engagement Director', parent: 'T_ENGAGEMENT', slackId: 'U07J18LUDPX' },
+                { key: 54, name: 'Greg', title: 'Engagement Manager', parent: 50, slackId: 'U09E7PKR01J' },
+                { key: 55, name: 'Cam', title: 'Engagement Manager', parent: 50, slackId: 'U0A50P7S343' },
+                { key: 56, name: 'Atul', title: 'Engagement Manager', parent: 50 },
+                { key: 57, name: 'Anna', title: 'Engagement Manager', parent: 50, slackId: 'U0A8E47NYNN' },
+                { key: 58, name: 'James E', title: 'Engagement Manager', parent: 51, slackId: 'U0A6L9W16PR' },
+                { key: 59, name: 'Ian', title: 'Engagement Manager', parent: 51 },
+                { key: 60, name: 'Brenda', title: 'Engagement Manager', parent: 52, slackId: 'U09BX4SUTN0' },
+                { key: 61, name: 'Diogo', title: 'Engagement Manager', parent: 52, slackId: 'U09PDEBHZ26' },
+                { key: 62, name: 'Tej', title: 'Engagement Manager', parent: 52, slackId: 'U09EWKR3TLG' },
+                { key: 63, name: 'Vaqar', title: 'Engagement Manager', parent: 52, slackId: 'U0A1V6JT2N4' },
+                { key: 64, name: 'Olly', title: 'Engagement Manager', parent: 52, slackId: 'U0AAYK0299N' },
+                { key: 65, name: 'Helen', title: 'Engagement Manager', parent: 53, slackId: 'U09GV4GMA1K' },
                 
-                // Laxmi's reports
-                { key: 58, name: 'James E', title: 'Engagement Manager', dept: 'Engagement', parent: 51 },
-                { key: 59, name: 'Ian', title: 'Engagement Manager', dept: 'Engagement', parent: 51 },
+                // ========== TEAMS UNDER NAT ==========
                 
-                // Milan's reports
-                { key: 60, name: 'Brenda', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
-                { key: 61, name: 'Diogo', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
-                { key: 62, name: 'Tej', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
-                { key: 63, name: 'Vaqar', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
-                { key: 64, name: 'Olly', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
+                // Ops Team
+                { key: 'T_OPS', name: 'Ops', category: 'team', parent: 100 },
+                { key: 101, name: 'John', title: 'Relationship Manager', parent: 'T_OPS', slackId: 'U09AS9TCAG5' },
+                { key: 102, name: 'Lucy', title: 'EA / UK Office Manager', parent: 'T_OPS', slackId: 'U0A6D2RE12A' },
+                { key: 103, name: 'Grace', title: 'Chaz PA', parent: 'T_OPS', slackId: 'U09BGSUV59V' },
                 
-                // Jessie's reports
-                { key: 65, name: 'Helen', title: 'Engagement Manager', dept: 'Engagement', parent: 53 },
+                // Finance Team
+                { key: 'T_FINANCE', name: 'Finance', category: 'team', parent: 100 },
+                { key: 104, name: 'Harun', title: 'Finance', parent: 'T_FINANCE', slackId: 'U07GBH1PZGU' },
                 
-                // Alpha Team (under Ahmed in Strategy)
-                { key: 71, name: 'Preeti', title: 'Vector', dept: 'Alpha', parent: 4 },
-                { key: 72, name: 'Adarsh', title: 'Vector', dept: 'Alpha', parent: 4 },
-                { key: 73, name: 'Sashwat', title: 'Vector', dept: 'Alpha', parent: 4 },
-                { key: 74, name: 'Abhishek', title: 'Vector', dept: 'Alpha', parent: 4 },
-                { key: 75, name: 'Shash', title: 'Vector', dept: 'Alpha', parent: 4 },
-                { key: 76, name: 'Suman', title: 'Vector', dept: 'Alpha', parent: 4 },
+                // ========== ALPHA TEAM (under Ahmed) ==========
                 
-                // Preeti's reports
-                { key: 77, name: 'Vishal', title: 'Alpha', dept: 'Alpha', parent: 71 },
-                { key: 78, name: 'Naveen', title: 'Alpha', dept: 'Alpha', parent: 71 },
-                { key: 79, name: 'Anshuman', title: 'Alpha', dept: 'Alpha', parent: 71 },
-                
-                // Adarsh's reports
-                { key: 80, name: 'Shubi', title: 'Alpha', dept: 'Alpha', parent: 72 },
-                { key: 81, name: 'Naman', title: 'Alpha', dept: 'Alpha', parent: 72 },
-                
-                // Sashwat's reports
-                { key: 82, name: 'Ritish', title: 'Alpha', dept: 'Alpha', parent: 73 },
-                { key: 83, name: 'Ayush', title: 'Alpha', dept: 'Alpha', parent: 73 },
-                { key: 84, name: 'Nikhil', title: 'Alpha', dept: 'Alpha', parent: 73 },
-                
-                // Abhishek's reports
-                { key: 85, name: 'Ajaykumar', title: 'Alpha', dept: 'Alpha', parent: 74 },
-                { key: 86, name: 'Parul', title: 'Alpha', dept: 'Alpha', parent: 74 },
-                { key: 87, name: 'Ushma', title: 'Alpha', dept: 'Alpha', parent: 74 },
-                
-                // Shash's reports
-                { key: 88, name: 'Soumya', title: 'Alpha', dept: 'Alpha', parent: 75 },
-                { key: 89, name: 'Kumar', title: 'Alpha', dept: 'Alpha', parent: 75 },
-                { key: 90, name: 'Yugant', title: 'Alpha', dept: 'Alpha', parent: 75 },
-                
-                // Suman's reports
-                { key: 91, name: 'Abhishek M', title: 'Alpha', dept: 'Alpha', parent: 76 },
-                { key: 92, name: 'Sagar', title: 'Alpha', dept: 'Alpha', parent: 76 },
-                { key: 93, name: 'Gitesh', title: 'Alpha', dept: 'Alpha', parent: 76 }
+                { key: 'T_ALPHA', name: 'Alpha', category: 'team', parent: 4 },
+                { key: 71, name: 'Preeti', title: 'Vector', parent: 'T_ALPHA', slackId: 'U096A3X8FM1' },
+                { key: 72, name: 'Adarsh', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVCES5U' },
+                { key: 73, name: 'Sashwat', title: 'Vector', parent: 'T_ALPHA', slackId: 'U09LVCNM74L' },
+                { key: 74, name: 'Abhishek', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVAGSAJ' },
+                { key: 75, name: 'Shash', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVC0EQ6' },
+                { key: 76, name: 'Suman', title: 'Vector', parent: 'T_ALPHA', slackId: 'U099RVDLQ3Y' },
+                { key: 77, name: 'Vishal', title: 'Alpha', parent: 71, slackId: 'U096A3VE3NF' },
+                { key: 78, name: 'Naveen', title: 'Alpha', parent: 71, slackId: 'U096A408J67' },
+                { key: 79, name: 'Anshuman', title: 'Alpha', parent: 71, slackId: 'U0ACEFNB8FL' },
+                { key: 80, name: 'Shubi', title: 'Alpha', parent: 72, slackId: 'U09SZCW989M' },
+                { key: 81, name: 'Naman', title: 'Alpha', parent: 72, slackId: 'U0A1QKWJAEQ' },
+                { key: 82, name: 'Ritish', title: 'Alpha', parent: 73, slackId: 'U09EN762DM2' },
+                { key: 83, name: 'Ayush', title: 'Alpha', parent: 73, slackId: 'U09TBCW7DM3' },
+                { key: 84, name: 'Nikhil', title: 'Alpha', parent: 73, slackId: 'U09TES79A1Y' },
+                { key: 85, name: 'Ajaykumar', title: 'Alpha', parent: 74, slackId: 'U0A55VBGXN1' },
+                { key: 86, name: 'Parul', title: 'Alpha', parent: 74, slackId: 'U0A63MR4JSC' },
+                { key: 87, name: 'Ushma', title: 'Alpha', parent: 74, slackId: 'U0ABEJL4UDU' },
+                { key: 88, name: 'Soumya', title: 'Alpha', parent: 75, slackId: 'U0A55V9TD1T' },
+                { key: 89, name: 'Kumar', title: 'Alpha', parent: 75, slackId: 'U0A5D0HGL2Y' },
+                { key: 90, name: 'Yugant', title: 'Alpha', parent: 75, slackId: 'U0A5D0LCFGC' },
+                { key: 91, name: 'Abhishek M', title: 'Alpha', parent: 76, slackId: 'U0ACJ3YGQQ4' },
+                { key: 92, name: 'Sagar', title: 'Alpha', parent: 76, slackId: 'U0ACJ3UC3CL' },
+                { key: 93, name: 'Gitesh', title: 'Alpha', parent: 76, slackId: 'U0ACEFJJ83U' }
             ];
 
             myDiagram.model = new go.TreeModel(nodeDataArray);
