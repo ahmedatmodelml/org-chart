@@ -384,82 +384,63 @@
             justify-content: flex-start;
         }
 
-        /* Controls */
-        .controls {
-            position: fixed;
-            bottom: 16px;
-            right: 14px;
+        /* Header Controls */
+        .header-controls {
             display: flex;
-            flex-direction: column;
-            gap: 4px;
-            z-index: 100;
+            align-items: center;
+            gap: 8px;
         }
 
-        .controls button {
-            width: 32px;
-            height: 32px;
+        .header-controls button {
+            padding: 6px 12px;
             border: 1px solid var(--slate-200);
             border-radius: 6px;
             background: var(--white);
             color: var(--slate-700);
-            font-size: 14px;
+            font-size: 12px;
+            font-family: inherit;
+            font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-            -webkit-tap-highlight-color: transparent;
+            white-space: nowrap;
         }
 
-        .controls button:hover {
+        .header-controls button:hover {
             background: var(--slate-50);
             border-color: var(--slate-300);
         }
 
-        .controls button:active {
-            transform: scale(0.94);
+        .header-controls button:active {
+            transform: scale(0.97);
             background: var(--slate-100);
+        }
+
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 0 4px;
+        }
+
+        .zoom-controls button {
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         .zoom-level {
+            font-size: 11px;
+            color: var(--slate-500);
+            min-width: 40px;
             text-align: center;
-            font-size: 9px;
             font-weight: 600;
             color: var(--slate-500);
             padding: 1px 0;
-        }
-
-        .legend {
-            position: fixed;
-            bottom: 16px;
-            left: 14px;
-            background: var(--white);
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 10px;
-            color: var(--slate-500);
-            z-index: 100;
-            border: 1px solid var(--slate-200);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
-        }
-
-        .legend div {
-            margin-bottom: 2px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .legend div:last-child {
-            margin-bottom: 0;
-        }
-
-        .legend kbd {
-            background: var(--slate-100);
-            padding: 1px 4px;
-            border-radius: 3px;
-            font-size: 8px;
-            font-family: inherit;
-            color: var(--slate-600);
-            font-weight: 500;
         }
 
         @keyframes nodeAppear {
@@ -554,33 +535,19 @@
                 height: 32px;
             }
 
-            .controls {
-                bottom: 24px;
-                right: 24px;
-                gap: 8px;
+            .header-controls button {
+                padding: 8px 14px;
+                font-size: 13px;
             }
 
-            .controls button {
-                width: 42px;
-                height: 42px;
-                font-size: 18px;
-                border-radius: 10px;
+            .zoom-controls button {
+                width: 32px;
+                height: 32px;
             }
 
             .zoom-level {
-                font-size: 11px;
-            }
-
-            .legend {
-                bottom: 24px;
-                left: 24px;
-                padding: 12px 16px;
                 font-size: 12px;
-            }
-
-            .legend kbd {
-                font-size: 11px;
-                padding: 3px 6px;
+                min-width: 45px;
             }
         }
 
@@ -628,8 +595,20 @@
                 gap: 10px;
             }
 
-            .legend {
-                display: none;
+            .header-controls button {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .zoom-controls button {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+
+            .zoom-level {
+                font-size: 9px;
+                min-width: 30px;
             }
         }
 
@@ -647,20 +626,13 @@
                 padding-top: 50px;
             }
 
-            .legend {
-                bottom: 10px;
-                left: 10px;
-                padding: 6px 8px;
+            .header-controls button {
+                padding: 4px 8px;
+                font-size: 10px;
             }
 
-            .controls {
-                bottom: 10px;
-                right: 10px;
-            }
-
-            .controls button {
-                width: 28px;
-                height: 28px;
+            .header-controls {
+                gap: 4px;
             }
         }
     </style>
@@ -670,24 +642,20 @@
         <div class="logo">
             <img src="logo.png" alt="Model ML" class="logo-img">
         </div>
+        <div class="header-controls">
+            <button id="expandAll" aria-label="Expand all">Expand All</button>
+            <button id="collapseAll" aria-label="Collapse all">Collapse All</button>
+            <div class="zoom-controls">
+                <button id="zoomOut" aria-label="Zoom out">−</button>
+                <span class="zoom-level" id="zoomLevel">100%</span>
+                <button id="zoomIn" aria-label="Zoom in">+</button>
+            </div>
+            <button id="resetView" aria-label="Reset view">Reset View</button>
+        </div>
         <div class="search-container">
             <input type="text" id="searchInput" placeholder="Search name..." autocomplete="off">
             <div class="search-results" id="searchResults"></div>
         </div>
-    </div>
-    
-    <div class="legend">
-        <div><kbd>Tap +</kbd> Expand</div>
-        <div><kbd>Pinch</kbd> Zoom</div>
-        <div><kbd>Drag</kbd> Pan</div>
-    </div>
-
-    <div class="controls">
-        <button id="expandAll" aria-label="Expand all" title="Expand all">⊞</button>
-        <button id="zoomIn" aria-label="Zoom in">+</button>
-        <div class="zoom-level" id="zoomLevel">100%</div>
-        <button id="zoomOut" aria-label="Zoom out">−</button>
-        <button id="resetView" aria-label="Reset view">⌂</button>
     </div>
 
     <div class="canvas-container" id="container">
@@ -1065,54 +1033,43 @@
             updateTransform();
         });
 
-        // Expand/Collapse all toggle
-        let allExpanded = false;
-        const expandBtn = document.getElementById('expandAll');
-        
+        // Expand/Collapse all functions
         function resetLines(container) {
             container.querySelectorAll('.children').forEach(children => {
                 children.style.setProperty('--line-width', '0px');
                 children.style.setProperty('--line-left', '50%');
             });
         }
-        
-        document.getElementById('expandAll').addEventListener('click', () => {
-            allExpanded = !allExpanded;
+
+        function expandAll() {
             const teams = document.querySelectorAll('.team');
             const teamChildren = document.querySelectorAll('.team-children');
             const connectors = document.querySelectorAll('.team + .connector');
             
-            teams.forEach(team => {
-                if (allExpanded) {
-                    team.classList.add('expanded');
-                } else {
-                    team.classList.remove('expanded');
-                }
-            });
+            teams.forEach(team => team.classList.add('expanded'));
+            teamChildren.forEach(children => children.classList.remove('collapsed'));
+            connectors.forEach(connector => connector.style.display = 'block');
             
+            setTimeout(updateAllLines, 50);
+        }
+
+        function collapseAll() {
+            const teams = document.querySelectorAll('.team');
+            const teamChildren = document.querySelectorAll('.team-children');
+            const connectors = document.querySelectorAll('.team + .connector');
+            
+            teams.forEach(team => team.classList.remove('expanded'));
             teamChildren.forEach(children => {
-                if (allExpanded) {
-                    children.classList.remove('collapsed');
-                } else {
-                    children.classList.add('collapsed');
-                    resetLines(children);
-                }
+                children.classList.add('collapsed');
+                resetLines(children);
             });
+            connectors.forEach(connector => connector.style.display = 'none');
             
-            connectors.forEach(connector => {
-                connector.style.display = allExpanded ? 'block' : 'none';
-            });
-            
-            expandBtn.textContent = allExpanded ? '⊟' : '⊞';
-            expandBtn.title = allExpanded ? 'Collapse all' : 'Expand all';
-            
-            if (allExpanded) {
-                setTimeout(updateAllLines, 50);
-            } else {
-                // Reset top-level lines too
-                setTimeout(updateAllLines, 50);
-            }
-        });
+            setTimeout(updateAllLines, 50);
+        }
+        
+        document.getElementById('expandAll').addEventListener('click', expandAll);
+        document.getElementById('collapseAll').addEventListener('click', collapseAll);
 
         function countAllReports(person) {
             if (!person.reports || person.reports.length === 0) return 0;
@@ -1597,10 +1554,7 @@
 
             if (!targetNode) {
                 // Person might be in collapsed team - expand all first
-                document.getElementById('expandAll').click();
-                if (!allExpanded) {
-                    document.getElementById('expandAll').click();
-                }
+                expandAll();
                 
                 setTimeout(() => {
                     personNodes.forEach(node => {
@@ -1615,10 +1569,7 @@
                 // Check if any parent is collapsed
                 let parent = targetNode.closest('.team-children.collapsed');
                 if (parent) {
-                    document.getElementById('expandAll').click();
-                    if (!allExpanded) {
-                        document.getElementById('expandAll').click();
-                    }
+                    expandAll();
                     setTimeout(() => doHighlight(targetNode), 100);
                 } else {
                     doHighlight(targetNode);
