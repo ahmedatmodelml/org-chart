@@ -763,6 +763,9 @@
                 {
                     name: 'Adam',
                     role: 'COO',
+                    staff: [
+                        { name: 'Jill', role: 'EA / NY Office Manager', reports: [] }
+                    ],
                     teams: [
                         {
                             name: 'Engagement',
@@ -877,7 +880,6 @@
                             name: 'Ops',
                             members: [
                                 { name: 'John', role: 'Relationship Manager', reports: [] },
-                                { name: 'Jill', role: 'EA / NY Office Manager', reports: [] },
                                 { name: 'Lucy', role: 'EA / UK Office Manager', reports: [] },
                                 { name: 'Grace', role: 'Chaz PA', reports: [] }
                             ]
@@ -1141,8 +1143,11 @@
             personEl.appendChild(roleEl);
             node.appendChild(personEl);
 
-            // Check for teams (like Adam has)
-            if (person.teams && person.teams.length > 0) {
+            // Check for teams or staff (like Adam has)
+            const hasTeams = person.teams && person.teams.length > 0;
+            const hasStaff = person.staff && person.staff.length > 0;
+            
+            if (hasTeams || hasStaff) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
                 node.appendChild(connector);
@@ -1150,18 +1155,37 @@
                 const children = document.createElement('div');
                 children.className = 'children';
 
-                person.teams.forEach(team => {
-                    const branch = document.createElement('div');
-                    branch.className = 'child-branch';
-                    
-                    const branchConnector = document.createElement('div');
-                    branchConnector.className = 'connector';
-                    branch.appendChild(branchConnector);
-                    
-                    const teamNode = createTeamNode(team);
-                    branch.appendChild(teamNode);
-                    children.appendChild(branch);
-                });
+                // Add staff with dotted lines first
+                if (hasStaff) {
+                    person.staff.forEach(staffMember => {
+                        const branch = document.createElement('div');
+                        branch.className = 'child-branch';
+                        
+                        const branchConnector = document.createElement('div');
+                        branchConnector.className = 'connector dotted';
+                        branch.appendChild(branchConnector);
+                        
+                        const childNode = createPersonNode(staffMember, true);
+                        branch.appendChild(childNode);
+                        children.appendChild(branch);
+                    });
+                }
+
+                // Add teams
+                if (hasTeams) {
+                    person.teams.forEach(team => {
+                        const branch = document.createElement('div');
+                        branch.className = 'child-branch';
+                        
+                        const branchConnector = document.createElement('div');
+                        branchConnector.className = 'connector';
+                        branch.appendChild(branchConnector);
+                        
+                        const teamNode = createTeamNode(team);
+                        branch.appendChild(teamNode);
+                        children.appendChild(branch);
+                    });
+                }
 
                 node.appendChild(children);
                 setTimeout(() => updateHorizontalLine(children), 10);
