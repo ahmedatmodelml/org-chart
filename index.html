@@ -696,6 +696,12 @@
                             ]
                         }
                     ]
+                },
+                {
+                    name: 'Strategy and BI',
+                    members: [
+                        { name: 'Ahmed', role: 'Special Projects', reports: [] }
+                    ]
                 }
             ],
             reports: [
@@ -867,7 +873,6 @@
                         {
                             name: 'Ops',
                             members: [
-                                { name: 'Ahmed', role: 'Special Projects', reports: [] },
                                 { name: 'John', role: 'Relationship Manager', reports: [] },
                                 { name: 'Jill', role: 'EA / NY Office Manager', reports: [] },
                                 { name: 'Lucy', role: 'EA / UK Office Manager', reports: [] },
@@ -1294,22 +1299,8 @@
             personEl.appendChild(roleEl);
             node.appendChild(personEl);
 
-            // Collect all children: direct reports + teams
-            const allChildren = [];
-
+            // First level: direct reports only (Arnie, Adam, Nat)
             if (data.reports && data.reports.length > 0) {
-                data.reports.forEach(r => {
-                    allChildren.push({ type: 'report', data: r });
-                });
-            }
-
-            if (data.teams && data.teams.length > 0) {
-                data.teams.forEach(t => {
-                    allChildren.push({ type: 'team', data: t });
-                });
-            }
-
-            if (allChildren.length > 0) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
                 node.appendChild(connector);
@@ -1317,7 +1308,7 @@
                 const children = document.createElement('div');
                 children.className = 'children';
 
-                allChildren.forEach(child => {
+                data.reports.forEach(report => {
                     const branch = document.createElement('div');
                     branch.className = 'child-branch';
                     
@@ -1325,18 +1316,39 @@
                     branchConnector.className = 'connector';
                     branch.appendChild(branchConnector);
                     
-                    let childNode;
-                    if (child.type === 'team') {
-                        childNode = createTeamNode(child.data);
-                    } else {
-                        childNode = createPersonNode(child.data, false);
-                    }
+                    const childNode = createPersonNode(report, false);
                     branch.appendChild(childNode);
                     children.appendChild(branch);
                 });
 
                 node.appendChild(children);
                 setTimeout(() => updateHorizontalLine(children), 100);
+            }
+
+            // Second level: teams (Data, Marketing, Sales) - on their own row below
+            if (data.teams && data.teams.length > 0) {
+                const connector2 = document.createElement('div');
+                connector2.className = 'connector';
+                node.appendChild(connector2);
+
+                const teamRow = document.createElement('div');
+                teamRow.className = 'children';
+
+                data.teams.forEach(team => {
+                    const branch = document.createElement('div');
+                    branch.className = 'child-branch';
+                    
+                    const branchConnector = document.createElement('div');
+                    branchConnector.className = 'connector';
+                    branch.appendChild(branchConnector);
+                    
+                    const teamNode = createTeamNode(team);
+                    branch.appendChild(teamNode);
+                    teamRow.appendChild(branch);
+                });
+
+                node.appendChild(teamRow);
+                setTimeout(() => updateHorizontalLine(teamRow), 100);
             }
 
             return node;
