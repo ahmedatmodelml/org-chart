@@ -670,16 +670,11 @@
             name: 'Chaz',
             role: 'CEO',
             teams: [
+                // Direct Chaz teams only
                 {
-                    name: 'Data',
+                    name: 'Strategy and BI',
                     members: [
-                        { name: 'Kesh', role: 'Data', reports: [] }
-                    ]
-                },
-                {
-                    name: 'Marketing',
-                    members: [
-                        { name: 'Sid', role: 'Marketing', reports: [] }
+                        { name: 'Ahmed', role: 'Special Projects', reports: [] }
                     ]
                 },
                 {
@@ -691,16 +686,28 @@
                             reports: [
                                 { name: 'Philip', role: 'EMEA PE', reports: [] },
                                 { name: 'Eli', role: 'US IB', reports: [] },
-                                { name: 'Steven', role: 'Sales', reports: [] },
-                                { name: 'Rags', role: 'EMEA/APAC Consulting', reports: [] }
+                                { name: 'Steven', role: 'Sales', reports: [] }
                             ]
-                        }
+                        },
+                        { name: 'Rags', role: 'EMEA/APAC Consulting', reports: [] }
                     ]
                 },
                 {
-                    name: 'Strategy and BI',
+                    name: 'Marketing',
                     members: [
-                        { name: 'Ahmed', role: 'Special Projects', reports: [] }
+                        { name: 'Sid', role: 'Marketing', reports: [] }
+                    ]
+                },
+                {
+                    name: 'Data',
+                    members: [
+                        { name: 'Kesh', role: 'Data', reports: [] }
+                    ]
+                },
+                {
+                    name: 'Legal',
+                    members: [
+                        { name: 'Eli', role: 'Legal', reports: [] }
                     ]
                 }
             ],
@@ -883,12 +890,6 @@
                             name: 'Finance',
                             members: [
                                 { name: 'Harun', role: 'Finance', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Legal',
-                            members: [
-                                { name: 'Eli', role: 'Legal', reports: [] }
                             ]
                         }
                     ]
@@ -1299,8 +1300,10 @@
             personEl.appendChild(roleEl);
             node.appendChild(personEl);
 
-            // First level: direct reports only (Arnie, Adam, Nat)
-            if (data.reports && data.reports.length > 0) {
+            const hasReports = data.reports && data.reports.length > 0;
+            const hasTeams = data.teams && data.teams.length > 0;
+
+            if (hasReports) {
                 const connector = document.createElement('div');
                 connector.className = 'connector';
                 node.appendChild(connector);
@@ -1308,6 +1311,7 @@
                 const children = document.createElement('div');
                 children.className = 'children';
 
+                // Add direct reports (Arnie, Adam, Nat)
                 data.reports.forEach(report => {
                     const branch = document.createElement('div');
                     branch.className = 'child-branch';
@@ -1321,34 +1325,26 @@
                     children.appendChild(branch);
                 });
 
+                // Add Chaz's direct teams as branches with tall connectors to align with exec teams
+                if (hasTeams) {
+                    data.teams.forEach(team => {
+                        const branch = document.createElement('div');
+                        branch.className = 'child-branch';
+                        
+                        // Tall connector to push teams down to same level as exec teams
+                        const branchConnector = document.createElement('div');
+                        branchConnector.className = 'connector';
+                        branchConnector.style.height = '110px'; // Match height of person node + connector
+                        branch.appendChild(branchConnector);
+                        
+                        const teamNode = createTeamNode(team);
+                        branch.appendChild(teamNode);
+                        children.appendChild(branch);
+                    });
+                }
+
                 node.appendChild(children);
                 setTimeout(() => updateHorizontalLine(children), 100);
-            }
-
-            // Second level: teams (Data, Marketing, Sales) - on their own row below
-            if (data.teams && data.teams.length > 0) {
-                const connector2 = document.createElement('div');
-                connector2.className = 'connector';
-                node.appendChild(connector2);
-
-                const teamRow = document.createElement('div');
-                teamRow.className = 'children';
-
-                data.teams.forEach(team => {
-                    const branch = document.createElement('div');
-                    branch.className = 'child-branch';
-                    
-                    const branchConnector = document.createElement('div');
-                    branchConnector.className = 'connector';
-                    branch.appendChild(branchConnector);
-                    
-                    const teamNode = createTeamNode(team);
-                    branch.appendChild(teamNode);
-                    teamRow.appendChild(branch);
-                });
-
-                node.appendChild(teamRow);
-                setTimeout(() => updateHorizontalLine(teamRow), 100);
             }
 
             return node;
