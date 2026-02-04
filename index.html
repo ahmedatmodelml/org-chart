@@ -366,18 +366,16 @@
         }
 
         .person.assistant {
-            padding: 8px 12px;
-            min-width: auto;
             border-style: dashed;
             border-color: var(--slate-300);
         }
 
-        .person.assistant .name {
-            font-size: 12px;
-        }
-
-        .person.assistant .role {
-            font-size: 9px;
+        .assistant-connector {
+            width: 16px;
+            height: 1px;
+            border-top: 1px dashed var(--slate-400);
+            align-self: center;
+            margin-top: 14px;
         }
 
         .assistant-wrapper {
@@ -1217,7 +1215,12 @@
 
                 pairWrapper.appendChild(personWrapper);
 
-                // Assistant wrapper (small box next to main person)
+                // Dotted connector line between person and assistant
+                const assistantConnector = document.createElement('div');
+                assistantConnector.className = 'assistant-connector';
+                pairWrapper.appendChild(assistantConnector);
+
+                // Assistant wrapper (box next to main person)
                 const assistantWrapper = document.createElement('div');
                 assistantWrapper.className = 'assistant-wrapper';
 
