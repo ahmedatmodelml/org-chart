@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Team Org Chart | Model ML</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model ML - Org Chart</title>
+    <link rel="preconnect" href="https://rsms.me/">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/gojs@3.1.5/release/go.js"></script>
     <style>
         * {
             margin: 0;
@@ -14,29 +14,11 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --slate-900: #0F172A;
-            --slate-800: #1E293B;
-            --slate-700: #334155;
-            --slate-600: #475569;
-            --slate-500: #64748B;
-            --slate-400: #94A3B8;
-            --slate-300: #CBD5E1;
-            --slate-200: #E2E8F0;
-            --slate-100: #F1F5F9;
-            --slate-50: #F8FAFC;
-            --white: #FFFFFF;
-            --black: #020617;
-        }
-
         body {
-            font-family: 'Inter Tight', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--slate-50);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #111827;
+            color: #fff;
             min-height: 100vh;
-            min-height: 100dvh;
-            color: var(--slate-900);
-            overflow: hidden;
-            touch-action: none;
         }
 
         .header {
@@ -45,30 +27,47 @@
             left: 0;
             right: 0;
             z-index: 100;
-            background: var(--white);
-            border-bottom: 1px solid var(--slate-200);
-            padding: 10px 16px;
+            background: #1f2937;
+            border-bottom: 1px solid #374151;
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
-        .logo {
+        .header-left {
             display: flex;
             align-items: center;
+            gap: 20px;
         }
 
-        .logo-img {
+        .logo {
             height: 28px;
-            width: auto;
         }
 
-        h1 {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--slate-600);
-            letter-spacing: -0.01em;
-            display: none;
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-controls button,
+        .header-controls select {
+            padding: 8px 12px;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            background: #1f2937;
+            color: #d1d5db;
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .header-controls button:hover,
+        .header-controls select:hover {
+            background: #374151;
+            border-color: #4b5563;
         }
 
         .search-container {
@@ -77,1798 +76,572 @@
 
         #searchInput {
             padding: 8px 12px;
-            border: 1px solid var(--slate-200);
-            border-radius: 8px;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            background: #1f2937;
+            color: #fff;
             font-size: 13px;
             font-family: inherit;
-            width: 180px;
+            width: 200px;
             outline: none;
-            transition: all 0.15s ease;
-        }
-
-        #searchInput:focus {
-            border-color: var(--slate-400);
-            box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.2);
         }
 
         #searchInput::placeholder {
-            color: var(--slate-400);
+            color: #6b7280;
         }
 
-        .search-results {
+        #searchInput:focus {
+            border-color: #6366f1;
+        }
+
+        #myDiagramDiv {
+            width: 100%;
+            height: calc(100vh - 60px);
+            margin-top: 60px;
+            background: #111827;
+        }
+
+        .info-popup {
             position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--white);
-            border: 1px solid var(--slate-200);
-            border-radius: 6px;
-            margin-top: 4px;
-            max-height: 200px;
-            overflow-y: auto;
+            padding: 16px 20px;
+            border-radius: 10px;
+            border: 1px solid #374151;
+            background: #1f2937;
+            color: #fff;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             z-index: 200;
             display: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            min-width: 220px;
+            max-width: 300px;
         }
 
-        .search-results.active {
+        .info-popup.visible {
             display: block;
         }
 
-        .search-result {
-            padding: 10px 12px;
-            cursor: pointer;
-            font-size: 13px;
-            border-bottom: 1px solid var(--slate-100);
-        }
-
-        .search-result:last-child {
-            border-bottom: none;
-        }
-
-        .search-result:hover {
-            background: var(--slate-50);
-        }
-
-        .search-result .result-name {
-            font-weight: 600;
-            color: var(--slate-900);
-        }
-
-        .search-result .result-role {
-            color: var(--slate-500);
-            font-size: 11px;
-            margin-top: 2px;
-        }
-
-        .person.highlighted {
-            border-color: var(--blue-500);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-        }
-
-        .person.highlighted .name {
-            color: var(--blue-600);
-        }
-
-        .canvas-container {
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-            cursor: grab;
-            background: 
-                radial-gradient(circle at 50% 50%, var(--slate-100) 0%, transparent 50%),
-                var(--slate-50);
-        }
-
-        .canvas-container:active {
-            cursor: grabbing;
-        }
-
-        .canvas {
-            transform-origin: 0 0;
-            padding: 60px 20px 20px 20px;
-            display: inline-flex;
-            justify-content: center;
-            min-width: 100vw;
-            min-height: 100vh;
-            min-height: 100dvh;
-        }
-
-        .org-chart {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            padding-bottom: 60px;
-            transition: all 0.4s ease;
-        }
-
-        .node {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.4s ease;
-        }
-
-        .person {
-            background: var(--white);
-            border: none;
-            border-radius: 8px;
-            padding: 16px 20px 16px 26px;
-            min-width: 120px;
-            text-align: left;
-            position: relative;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            user-select: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            overflow: hidden;
-        }
-
-        /* Colored left stripe based on level */
-        .person::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 5px;
-            background: var(--level-color, #2672EC);
-            border-radius: 8px 0 0 8px;
-        }
-
-        .person[data-level="0"]::before { background: #AC193D; }
-        .person[data-level="1"]::before { background: #2672EC; }
-        .person[data-level="2"]::before { background: #8C0095; }
-        .person[data-level="3"]::before { background: #5133AB; }
-        .person[data-level="4"]::before { background: #008299; }
-        .person[data-level="5"]::before { background: #D24726; }
-        .person[data-level="6"]::before { background: #008A00; }
-        .person[data-level="7"]::before { background: #094AB2; }
-
-        .person:hover {
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-            transform: translateY(-2px);
-        }
-
-        .person .name {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--slate-900);
-            letter-spacing: -0.01em;
-        }
-
-        .person .role {
-            font-size: 12px;
-            color: var(--slate-500);
-            margin-top: 4px;
-            font-weight: 400;
-        }
-
-        /* Team node styling */
-        .team {
-            background: var(--slate-800);
-            border: none;
-            border-radius: 8px;
-            padding: 14px 24px;
-            min-width: 130px;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
-            user-select: none;
-            transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .team:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.25);
-        }
-
-        .team:active {
-            transform: scale(0.98);
-        }
-
-        .team.expanded {
-            background: var(--slate-700);
-        }
-
-        .team::after {
-            content: '+';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--white);
-            color: var(--slate-900);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 14px;
-            line-height: 18px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .team.expanded::after {
-            content: '−';
-        }
-
-        .team .name {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--white);
-            letter-spacing: -0.01em;
-        }
-
-        .team .count {
-            font-size: 11px;
-            color: var(--slate-400);
-            margin-top: 3px;
-            font-weight: 500;
-        }
-
-        .team.expanded .count {
-            color: var(--slate-300);
-        }
-
-        .connector {
-            width: 2px;
-            height: 28px;
-            background: var(--slate-300);
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-            border-radius: 1px;
-        }
-
-        .children {
-            display: inline-flex;
-            gap: 20px;
-            position: relative;
-            padding-top: 28px;
-            transition: all 0.4s ease;
-            justify-content: center;
-        }
-
-        .children.collapsed {
-            display: none;
-        }
-
-        .children::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            height: 2px;
-            background: var(--slate-300);
-            left: var(--line-left, 50%);
-            width: var(--line-width, 0);
-            transition: all 0.3s ease;
-            border-radius: 1px;
-        }
-
-        .child-branch {
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.4s ease;
-        }
-
-        .child-branch > .connector {
-            height: 24px;
-        }
-
-        /* Dotted line for staff roles */
-        .connector.dotted {
-            background: none;
-            border-left: 1px dashed var(--slate-400);
-        }
-
-        .children::before.dotted {
-            background: none;
-            border-top: 1px dashed var(--slate-400);
-        }
-
-        .person.staff {
-            border-style: dashed;
-            border-color: var(--slate-300);
-        }
-
-        /* Assistant positioned next to person */
-        .person-with-assistant {
-            display: flex;
-            align-items: flex-start;
-            gap: 0;
-        }
-
-        .person-with-assistant > .person-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .person.assistant {
-            border-style: dashed;
-            border-color: var(--slate-400);
-        }
-
-        .assistant-connector {
-            width: 24px;
-            border-top: 2px dashed var(--slate-400);
-            margin-top: 24px;
-            flex-shrink: 0;
-        }
-
-        .assistant-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-        }
-
-        /* Header Layout */
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        /* Header Controls */
-        .header-controls {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .header-controls button {
-            width: 32px;
-            height: 32px;
-            padding: 0;
-            border: 1px solid var(--slate-200);
-            border-radius: 6px;
-            background: var(--white);
-            color: var(--slate-700);
+        .info-popup h3 {
+            margin: 0 0 2px 0;
             font-size: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .header-controls button:hover {
-            background: var(--slate-50);
-            border-color: var(--slate-300);
-        }
-
-        .header-controls button:active {
-            transform: scale(0.95);
-            background: var(--slate-100);
-        }
-
-        .zoom-level {
-            font-size: 11px;
-            color: var(--slate-500);
-            min-width: 38px;
-            text-align: center;
             font-weight: 600;
-            color: var(--slate-500);
-            padding: 1px 0;
         }
 
-        /* Person Info Modal */
-        .person-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(15, 23, 42, 0.4);
-            z-index: 200;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.2s ease;
-        }
-
-        .person-modal-overlay.visible {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .person-modal {
-            background: var(--white);
-            border-radius: 12px;
-            padding: 24px;
-            min-width: 280px;
-            max-width: 360px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            transform: scale(0.95);
-            transition: transform 0.2s ease;
-        }
-
-        .person-modal-overlay.visible .person-modal {
-            transform: scale(1);
-        }
-
-        .person-modal-header {
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--slate-200);
-        }
-
-        .person-modal-name {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--slate-900);
-        }
-
-        .person-modal-role {
+        .info-popup p {
+            margin: 0 0 12px 0;
             font-size: 13px;
-            color: var(--slate-500);
-            margin-top: 2px;
+            color: #9ca3af;
         }
 
-        .person-modal-section {
-            margin-bottom: 14px;
+        .popup-section {
+            margin-bottom: 10px;
         }
 
-        .person-modal-section:last-child {
+        .popup-section:last-child {
             margin-bottom: 0;
         }
 
-        .person-modal-label {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--slate-400);
+        .popup-label {
+            font-size: 10px;
+            color: #6b7280;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
         }
 
-        .person-modal-value {
-            font-size: 14px;
-            color: var(--slate-700);
-        }
-
-        .person-modal-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .person-modal-list li {
-            font-size: 14px;
-            color: var(--slate-700);
-            padding: 3px 0;
-        }
-
-        .person-modal-none {
+        .popup-section > div:last-child {
             font-size: 13px;
-            color: var(--slate-400);
-            font-style: italic;
         }
 
-        .person-modal-close {
+        #hidden {
+            font: 500 18px Inter;
+            opacity: 0;
             position: absolute;
-            top: 12px;
-            right: 12px;
-            width: 28px;
-            height: 28px;
-            border: none;
-            background: var(--slate-100);
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 16px;
-            color: var(--slate-500);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s ease;
-        }
-
-        .person-modal-close:hover {
-            background: var(--slate-200);
-            color: var(--slate-700);
-        }
-
-        .person-modal {
-            position: relative;
-        }
-
-        @keyframes nodeAppear {
-            from {
-                opacity: 0;
-                transform: translateY(-12px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .team-children:not(.collapsed) > .child-branch {
-            animation: nodeAppear 0.3s ease forwards;
-        }
-
-        .team-children:not(.collapsed) > .child-branch:nth-child(1) { animation-delay: 0.02s; }
-        .team-children:not(.collapsed) > .child-branch:nth-child(2) { animation-delay: 0.04s; }
-        .team-children:not(.collapsed) > .child-branch:nth-child(3) { animation-delay: 0.06s; }
-        .team-children:not(.collapsed) > .child-branch:nth-child(4) { animation-delay: 0.08s; }
-        .team-children:not(.collapsed) > .child-branch:nth-child(5) { animation-delay: 0.10s; }
-        .team-children:not(.collapsed) > .child-branch:nth-child(6) { animation-delay: 0.12s; }
-
-        /* Tablet and up */
-        @media (min-width: 768px) {
-            .header {
-                padding: 16px 32px;
-            }
-
-            .logo-img {
-                height: 34px;
-            }
-
-            h1 {
-                display: block;
-                font-size: 15px;
-            }
-
-            .canvas {
-                padding: 120px 50px 50px 50px;
-            }
-
-            .person {
-                padding: 18px 26px;
-                min-width: 120px;
-                border-radius: 12px;
-            }
-
-            .person .name {
-                font-size: 15px;
-            }
-
-            .person .role {
-                font-size: 12px;
-                margin-top: 4px;
-            }
-
-            .team {
-                padding: 18px 30px;
-                min-width: 160px;
-                border-radius: 12px;
-            }
-
-            .team::after {
-                width: 24px;
-                height: 24px;
-                font-size: 16px;
-                line-height: 22px;
-                bottom: -12px;
-            }
-
-            .team .name {
-                font-size: 14px;
-            }
-
-            .team .count {
-                font-size: 12px;
-                margin-top: 4px;
-            }
-
-            .connector {
-                height: 32px;
-            }
-
-            .children {
-                gap: 24px;
-                padding-top: 32px;
-            }
-
-            .child-branch > .connector {
-                height: 32px;
-            }
-
-            .header-controls button {
-                width: 36px;
-                height: 36px;
-                font-size: 18px;
-            }
-
-            .header-controls {
-                gap: 6px;
-            }
-
-            .zoom-level {
-                font-size: 12px;
-                min-width: 42px;
-            }
-        }
-
-        /* Desktop */
-        @media (min-width: 1024px) {
-            .header {
-                justify-content: space-between;
-            }
-
-            .header::after {
-                content: '';
-                width: 120px;
-            }
-        }
-
-        /* Small phones */
-        @media (max-width: 374px) {
-            .person {
-                padding: 10px 14px;
-                min-width: 80px;
-            }
-
-            .person .name {
-                font-size: 12px;
-            }
-
-            .person .role {
-                font-size: 9px;
-            }
-
-            .team {
-                padding: 10px 16px;
-                min-width: 100px;
-            }
-
-            .team .name {
-                font-size: 11px;
-            }
-
-            .team .count {
-                font-size: 9px;
-            }
-
-            .children {
-                gap: 10px;
-            }
-
-            .header-controls button {
-                width: 26px;
-                height: 26px;
-                font-size: 12px;
-            }
-
-            .header-controls {
-                gap: 2px;
-            }
-
-            .zoom-level {
-                font-size: 9px;
-                min-width: 28px;
-            }
-
-            .header-left {
-                gap: 8px;
-            }
-        }
-
-        /* Landscape mobile */
-        @media (max-height: 500px) and (orientation: landscape) {
-            .header {
-                padding: 6px 12px;
-            }
-
-            .logo-img {
-                height: 24px;
-            }
-
-            .canvas {
-                padding-top: 50px;
-            }
-
-            .header-controls button {
-                width: 28px;
-                height: 28px;
-                font-size: 14px;
-            }
-
-            .header-controls {
-                gap: 3px;
-            }
-
-            .header-left {
-                gap: 10px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <div class="header-left">
-            <div class="logo">
-                <img src="logo.png" alt="Model ML" class="logo-img">
-            </div>
+            <img src="logo.png" alt="Model ML" class="logo">
             <div class="header-controls">
-                <button id="expandAll" aria-label="Expand all" title="Expand all">⊞</button>
-                <button id="collapseAll" aria-label="Collapse all" title="Collapse all">⊟</button>
-                <button id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button>
-                <span class="zoom-level" id="zoomLevel">100%</span>
-                <button id="zoomIn" aria-label="Zoom in" title="Zoom in">+</button>
-                <button id="resetView" aria-label="Reset view" title="Reset view">⌂</button>
+                <button id="zoomToFit">Fit</button>
+                <button id="centerRoot">Center</button>
+                <button id="expandAll">Expand All</button>
+                <button id="collapseAll">Collapse All</button>
+                <select id="theme">
+                    <option value="light">Light</option>
+                    <option value="dark" selected>Dark</option>
+                </select>
             </div>
         </div>
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search name..." autocomplete="off">
-            <div class="search-results" id="searchResults"></div>
+            <input type="text" id="searchInput" placeholder="Search name...">
         </div>
     </div>
 
-    <div class="canvas-container" id="container">
-        <div class="canvas" id="canvas">
-            <div class="org-chart" id="orgChart"></div>
+    <div id="myDiagramDiv"></div>
+
+    <div id="infoPopup" class="info-popup">
+        <h3 id="dialogName"></h3>
+        <p id="dialogTitle"></p>
+        <div class="popup-section">
+            <div class="popup-label">Reports to</div>
+            <div id="dialogManager"></div>
+        </div>
+        <div class="popup-section">
+            <div class="popup-label">Direct Reports</div>
+            <div id="dialogReports"></div>
         </div>
     </div>
 
-    <div class="person-modal-overlay" id="personModal">
-        <div class="person-modal">
-            <button class="person-modal-close" id="modalClose">×</button>
-            <div class="person-modal-header">
-                <div class="person-modal-name" id="modalName"></div>
-                <div class="person-modal-role" id="modalRole"></div>
-            </div>
-            <div class="person-modal-section">
-                <div class="person-modal-label">Reports to</div>
-                <div class="person-modal-value" id="modalManager"></div>
-            </div>
-            <div class="person-modal-section">
-                <div class="person-modal-label">Direct Reports</div>
-                <div id="modalReports"></div>
-            </div>
-        </div>
-    </div>
+    <p id="hidden">Model ML Org Chart</p>
 
     <script>
-        // Org data structure
-        const orgData = {
-            name: 'Chaz',
-            role: 'CEO',
-            teams: [
-                // Direct Chaz teams only
-                {
-                    name: 'Strategy and BI',
-                    members: [
-                        { name: 'Ahmed', role: 'Special Projects', reports: [
-                            { name: 'Kesh', role: 'Data', reports: [] }
-                        ] }
-                    ]
+        let myDiagram;
+
+        function init() {
+            myDiagram = new go.Diagram('myDiagramDiv', {
+                allowCopy: false,
+                allowDelete: false,
+                initialAutoScale: go.AutoScale.Uniform,
+                maxSelectionCount: 1,
+                validCycle: go.CycleMode.DestinationTree,
+                layout: new go.TreeLayout({
+                    treeStyle: go.TreeStyle.LastParents,
+                    arrangement: go.TreeArrangement.Horizontal,
+                    angle: 90,
+                    layerSpacing: 35,
+                    alternateAngle: 90,
+                    alternateLayerSpacing: 35,
+                    alternateAlignment: go.TreeAlignment.Bus,
+                    alternateNodeSpacing: 20
+                }),
+                'undoManager.isEnabled': false,
+                'themeManager.changesDivBackground': true,
+                'themeManager.currentTheme': document.getElementById('theme').value
+            });
+
+            // Light theme
+            myDiagram.themeManager.set('light', {
+                colors: {
+                    background: '#f8fafc',
+                    text: '#111827',
+                    textHighlight: '#6366f1',
+                    subtext: '#6b7280',
+                    badge: '#f0fdf4',
+                    badgeBorder: '#16a34a33',
+                    badgeText: '#15803d',
+                    divider: '#e5e7eb',
+                    shadow: '#9ca3af',
+                    levels: ['#AC193D', '#2672EC', '#8C0095', '#5133AB', '#008299', '#D24726', '#008A00', '#094AB2'],
+                    dragOver: '#f0f9ff',
+                    link: '#d1d5db',
+                    div: '#f3f4f6'
                 },
-                {
-                    name: 'Sales',
-                    members: [
-                        {
-                            name: 'Jonny',
-                            role: 'EMEA IB',
-                            reports: [
-                                { name: 'Philip', role: 'EMEA PE', reports: [] },
-                                { name: 'Eli', role: 'US IB', reports: [] },
-                                { name: 'Steven', role: 'Sales', reports: [] }
-                            ]
-                        },
-                        { name: 'Rags', role: 'Global Consulting', reports: [], dropLevel: true }
-                    ]
-                },
-                {
-                    name: 'Marketing',
-                    members: [
-                        { name: 'Sid', role: 'Marketing', reports: [] }
-                    ]
-                },
-                {
-                    name: 'Legal',
-                    members: [
-                        { name: 'Eli', role: 'Legal', reports: [] }
-                    ]
+                fonts: {
+                    name: '500 0.875rem Inter, sans-serif',
+                    normal: '0.875rem Inter, sans-serif',
+                    badge: '500 0.7rem Inter, sans-serif'
                 }
-            ],
-            reports: [
-                {
-                    name: 'Arnie',
-                    role: 'CTO',
-                    teams: [
-                        {
-                            name: 'Design',
-                            members: [
-                                { name: 'Mayowa', role: 'Designer', reports: [] },
-                                { name: 'Musleh', role: 'Designer', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Product',
-                            members: [
-                                { name: 'Alex', role: 'Product', reports: [] },
-                                { name: 'Marta', role: 'Product', reports: [] },
-                                { name: 'Joseph', role: 'Product', reports: [] },
-                                { name: 'Miquel', role: 'Product', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Engineering',
-                            members: [
-                                {
-                                    name: 'Mark',
-                                    role: 'Head of Engineering',
-                                    reports: [
-                                        { name: 'Roman', role: 'Engineer', reports: [
-                                            { name: 'Danish', role: 'Engineer', reports: [] },
-                                            { name: 'Manideep', role: 'Engineer', reports: [] },
-                                            { name: 'Luke', role: 'Engineer', reports: [] },
-                                            { name: 'Ashish', role: 'Engineer', reports: [] }
-                                        ] },
-                                        { name: 'Chester', role: 'Engineer', reports: [
-                                            { name: 'Darshan', role: 'Engineer', reports: [] }
-                                        ] },
-                                        { name: 'Imdad', role: 'Engineer', reports: [] },
-                                        { name: 'Ahmet', role: 'Engineer', reports: [] },
-                                        { name: 'Mohit', role: 'Engineer', reports: [] },
-                                        { name: 'Dominic', role: 'Engineer', reports: [] },
-                                        { name: 'Simone', role: 'Engineer', reports: [] },
-                                        { name: 'Ignacio', role: 'Engineer', reports: [] },
-                                        { name: 'Ed', role: 'Engineer', reports: [] },
-                                        { name: 'Maurits', role: 'Engineer', reports: [] },
-                                        { name: 'Sergey', role: 'Engineer', reports: [] }
-                                    ]
-                                },
-                                { name: 'James', role: 'Head of AI', reports: [] }
-                            ]
-                        }
-                    ]
+            });
+
+            // Dark theme
+            myDiagram.themeManager.set('dark', {
+                colors: {
+                    background: '#111827',
+                    text: '#fff',
+                    textHighlight: '#818cf8',
+                    subtext: '#9ca3af',
+                    badge: '#22c55e19',
+                    badgeBorder: '#22c55e21',
+                    badgeText: '#4ade80',
+                    divider: '#374151',
+                    shadow: '#000',
+                    levels: ['#AC193D', '#2672EC', '#8C0095', '#5133AB', '#008299', '#D24726', '#008A00', '#094AB2'],
+                    dragOver: '#1e3a5f',
+                    link: '#4b5563',
+                    div: '#1f2937'
                 },
-                {
-                    name: 'Adam',
-                    role: 'COO',
-                    assistant: { name: 'Jill', role: 'EA / NY Office Manager' },
-                    teams: [
-                        {
-                            name: 'Engagement',
-                            members: [
-                                {
-                                    name: 'Ben',
-                                    role: 'US IB Lead',
-                                    reports: [
-                                        { name: 'Greg', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Cam', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Atul', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Anna', role: 'Engagement Manager', reports: [] }
-                                    ]
-                                },
-                                {
-                                    name: 'Laxmi',
-                                    role: 'EMEA IB Lead',
-                                    reports: [
-                                        { name: 'James', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Ian', role: 'Engagement Manager', reports: [] }
-                                    ]
-                                },
-                                {
-                                    name: 'Milan',
-                                    role: 'EMEA Consulting Lead',
-                                    reports: [
-                                        { name: 'Brenda', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Diogo', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Tej', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Vaqar', role: 'Engagement Manager', reports: [] },
-                                        { name: 'Olly', role: 'Engagement Manager', reports: [] }
-                                    ]
-                                },
-                                {
-                                    name: 'Jessie',
-                                    role: 'Engagement Director',
-                                    reports: [
-                                        { name: 'Helen', role: 'Engagement Manager', reports: [] }
-                                    ]
-                                }
-                            ]
-                        },
-                        {
-                            name: 'Alpha',
-                            head: {
-                                name: 'Ahmed',
-                                role: 'Alpha Lead',
-                                reports: [
-                                    {
-                                        name: 'Preeti',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Vishal', role: 'Alpha', reports: [] },
-                                            { name: 'Naveen', role: 'Alpha', reports: [] },
-                                            { name: 'Anshuman', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Adarsh',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Shubi', role: 'Alpha', reports: [] },
-                                            { name: 'Naman', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Sashwat',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Ritish', role: 'Alpha', reports: [] },
-                                            { name: 'Ayush', role: 'Alpha', reports: [] },
-                                            { name: 'Nikhil', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Abhishek',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Ajaykumar', role: 'Alpha', reports: [] },
-                                            { name: 'Parul', role: 'Alpha', reports: [] },
-                                            { name: 'Ushma', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Shash',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Soumya', role: 'Alpha', reports: [] },
-                                            { name: 'Kumar', role: 'Alpha', reports: [] },
-                                            { name: 'Yugant', role: 'Alpha', reports: [] }
-                                        ]
-                                    },
-                                    {
-                                        name: 'Suman',
-                                        role: 'Vector',
-                                        reports: [
-                                            { name: 'Abhishek M', role: 'Alpha', reports: [] },
-                                            { name: 'Sagar', role: 'Alpha', reports: [] },
-                                            { name: 'Gitesh', role: 'Alpha', reports: [] }
-                                        ]
-                                    }
-                                ]
+                fonts: {
+                    name: '500 0.875rem Inter, sans-serif',
+                    normal: '0.875rem Inter, sans-serif',
+                    badge: '500 0.7rem Inter, sans-serif'
+                }
+            });
+
+            function findLevelColor(node) {
+                return node.findTreeLevel();
+            }
+
+            // Hidden spacer node template
+            myDiagram.nodeTemplateMap.add('hidden',
+                new go.Node({ 
+                    selectable: false,
+                    width: 1,
+                    height: 1
+                })
+            );
+
+            // Node template
+            myDiagram.nodeTemplate =
+                new go.Node(go.Panel.Spot, {
+                    isShadowed: true,
+                    shadowOffset: new go.Point(0, 2),
+                    selectionObjectName: 'BODY',
+                    click: (e, node) => {
+                        const data = node.data;
+                        if (data.category === 'hidden') return;
+                        
+                        const popup = document.getElementById('infoPopup');
+                        
+                        document.getElementById('dialogName').textContent = data.name;
+                        document.getElementById('dialogTitle').textContent = data.title;
+                        
+                        // Find manager
+                        const parent = node.findTreeParentNode();
+                        if (parent && parent.data.category !== 'hidden') {
+                            document.getElementById('dialogManager').textContent = parent.data.name;
+                        } else if (parent && parent.data.category === 'hidden') {
+                            const grandparent = parent.findTreeParentNode();
+                            document.getElementById('dialogManager').textContent = grandparent ? grandparent.data.name : 'None';
+                        } else {
+                            document.getElementById('dialogManager').textContent = 'None';
+                        }
+                        
+                        // Find direct reports
+                        const reports = [];
+                        node.findTreeChildrenNodes().each(child => {
+                            if (child.data.category !== 'hidden') {
+                                reports.push(child.data.name);
                             }
-                        }
-                    ]
-                },
-                {
-                    name: 'Nat',
-                    role: 'Chief of Staff',
-                    teams: [
-                        {
-                            name: 'Ops',
-                            members: [
-                                { name: 'John', role: 'Relationship Manager', reports: [] },
-                                { name: 'Lucy', role: 'EA / UK Office Manager', reports: [] },
-                                { name: 'Grace', role: 'Chaz PA', reports: [] }
-                            ]
-                        },
-                        {
-                            name: 'Finance',
-                            members: [
-                                { name: 'Harun', role: 'Finance', reports: [] }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        };
-
-        // Zoom and pan state
-        let scale = 1;
-        let panX = 0;
-        let panY = 0;
-        let isDragging = false;
-        let startX, startY;
-
-        const container = document.getElementById('container');
-        const canvas = document.getElementById('canvas');
-        const zoomLevelDisplay = document.getElementById('zoomLevel');
-
-        // Set initial scale based on screen size
-        function setInitialScale() {
-            if (window.innerWidth < 768) {
-                scale = 0.7;
-            } else if (window.innerWidth < 1024) {
-                scale = 0.85;
-            } else {
-                scale = 1;
-            }
-            updateTransform();
-        }
-
-        function updateTransform() {
-            canvas.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
-            zoomLevelDisplay.textContent = `${Math.round(scale * 100)}%`;
-        }
-
-        // Mouse wheel zoom
-        container.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? 0.92 : 1.08;
-            const newScale = Math.min(Math.max(scale * delta, 0.1), 3);
-            
-            const rect = container.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            panX = x - (x - panX) * (newScale / scale);
-            panY = y - (y - panY) * (newScale / scale);
-            scale = newScale;
-            
-            updateTransform();
-        }, { passive: false });
-
-        // Pan with mouse drag
-        container.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.team')) return;
-            isDragging = true;
-            startX = e.clientX - panX;
-            startY = e.clientY - panY;
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            panX = e.clientX - startX;
-            panY = e.clientY - startY;
-            updateTransform();
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-        });
-
-        // Touch support
-        let lastTouchDist = 0;
-        let lastTouchX = 0;
-        let lastTouchY = 0;
-        let touchStartTime = 0;
-
-        container.addEventListener('touchstart', (e) => {
-            touchStartTime = Date.now();
-            if (e.touches.length === 1) {
-                if (e.target.closest('.team')) return;
-                isDragging = true;
-                startX = e.touches[0].clientX - panX;
-                startY = e.touches[0].clientY - panY;
-            } else if (e.touches.length === 2) {
-                isDragging = false;
-                lastTouchDist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-                lastTouchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                lastTouchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-            }
-        }, { passive: true });
-
-        container.addEventListener('touchmove', (e) => {
-            if (e.touches.length === 1 && isDragging) {
-                e.preventDefault();
-                panX = e.touches[0].clientX - startX;
-                panY = e.touches[0].clientY - startY;
-                updateTransform();
-            } else if (e.touches.length === 2) {
-                e.preventDefault();
-                const dist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-                const delta = dist / lastTouchDist;
-                const newScale = Math.min(Math.max(scale * delta, 0.1), 3);
-                
-                const touchX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                const touchY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                
-                panX = touchX - (lastTouchX - panX) * (newScale / scale);
-                panY = touchY - (lastTouchY - panY) * (newScale / scale);
-                scale = newScale;
-                
-                lastTouchDist = dist;
-                lastTouchX = touchX;
-                lastTouchY = touchY;
-                
-                updateTransform();
-            }
-        }, { passive: false });
-
-        container.addEventListener('touchend', () => {
-            isDragging = false;
-        });
-
-        // Button controls
-        document.getElementById('zoomIn').addEventListener('click', () => {
-            scale = Math.min(scale * 1.2, 3);
-            updateTransform();
-        });
-
-        document.getElementById('zoomOut').addEventListener('click', () => {
-            scale = Math.max(scale * 0.8, 0.1);
-            updateTransform();
-        });
-
-        document.getElementById('resetView').addEventListener('click', () => {
-            setInitialScale();
-            panX = 0;
-            panY = 0;
-            updateTransform();
-        });
-
-        // Expand/Collapse all functions
-        function resetLines(container) {
-            container.querySelectorAll('.children').forEach(children => {
-                children.style.setProperty('--line-width', '0px');
-                children.style.setProperty('--line-left', '50%');
-            });
-        }
-
-        function expandAll() {
-            const teams = document.querySelectorAll('.team');
-            const teamChildren = document.querySelectorAll('.team-children');
-            const connectors = document.querySelectorAll('.team + .connector');
-            
-            teams.forEach(team => team.classList.add('expanded'));
-            teamChildren.forEach(children => children.classList.remove('collapsed'));
-            connectors.forEach(connector => connector.style.display = 'block');
-            
-            setTimeout(updateAllLines, 50);
-        }
-
-        function collapseAll() {
-            const teams = document.querySelectorAll('.team');
-            const teamChildren = document.querySelectorAll('.team-children');
-            const connectors = document.querySelectorAll('.team + .connector');
-            
-            teams.forEach(team => team.classList.remove('expanded'));
-            teamChildren.forEach(children => {
-                children.classList.add('collapsed');
-                resetLines(children);
-            });
-            connectors.forEach(connector => connector.style.display = 'none');
-            
-            setTimeout(updateAllLines, 50);
-        }
-        
-        document.getElementById('expandAll').addEventListener('click', expandAll);
-        document.getElementById('collapseAll').addEventListener('click', collapseAll);
-
-        function countAllReports(person) {
-            if (!person.reports || person.reports.length === 0) return 0;
-            let count = person.reports.length;
-            person.reports.forEach(r => {
-                count += countAllReports(r);
-            });
-            return count;
-        }
-
-        function countTeamMembers(team) {
-            if (team.head) {
-                return 1 + countAllReports(team.head);
-            }
-            let count = team.members.length;
-            team.members.forEach(m => {
-                count += countAllReports(m);
-            });
-            return count;
-        }
-
-        function updateHorizontalLine(children) {
-            requestAnimationFrame(() => {
-                const branches = Array.from(children.querySelectorAll(':scope > .child-branch'));
-                if (branches.length > 1) {
-                    const firstCenter = branches[0].offsetLeft + branches[0].offsetWidth / 2;
-                    const lastCenter = branches[branches.length - 1].offsetLeft + branches[branches.length - 1].offsetWidth / 2;
-                    children.style.setProperty('--line-left', `${firstCenter}px`);
-                    children.style.setProperty('--line-width', `${lastCenter - firstCenter}px`);
-                } else if (branches.length === 1) {
-                    children.style.setProperty('--line-left', '50%');
-                    children.style.setProperty('--line-width', '0px');
-                }
-            });
-        }
-
-        function updateAllLines() {
-            document.querySelectorAll('.children:not(.collapsed)').forEach(updateHorizontalLine);
-        }
-
-        // Person nodes are always expanded - no click to expand
-        function createPersonNode(person, isDotted = false, level = 0) {
-            const node = document.createElement('div');
-            node.className = 'node';
-
-            // Check if person has an assistant (renders side-by-side)
-            const hasAssistant = person.assistant;
-            const hasTeams = person.teams && person.teams.length > 0;
-
-            if (hasAssistant) {
-                // Create wrapper for side-by-side layout
-                const pairWrapper = document.createElement('div');
-                pairWrapper.className = 'person-with-assistant';
-
-                // Main person wrapper (will contain person + their children)
-                const personWrapper = document.createElement('div');
-                personWrapper.className = 'person-wrapper';
-
-                const personEl = document.createElement('div');
-                personEl.className = 'person';
-                personEl.setAttribute('data-level', level % 8);
-
-                const nameEl = document.createElement('div');
-                nameEl.className = 'name';
-                nameEl.textContent = person.name;
-
-                const roleEl = document.createElement('div');
-                roleEl.className = 'role';
-                roleEl.textContent = person.role;
-
-                personEl.appendChild(nameEl);
-                personEl.appendChild(roleEl);
-                personWrapper.appendChild(personEl);
-
-                // Add teams under the main person
-                if (hasTeams) {
-                    const connector = document.createElement('div');
-                    connector.className = 'connector';
-                    personWrapper.appendChild(connector);
-
-                    const children = document.createElement('div');
-                    children.className = 'children';
-
-                    person.teams.forEach(team => {
-                        const branch = document.createElement('div');
-                        branch.className = 'child-branch';
+                        });
+                        document.getElementById('dialogReports').innerHTML = reports.length > 0 
+                            ? reports.map(r => `<div style="padding: 1px 0;">${r}</div>`).join('')
+                            : '<span style="color: #6b7280; font-style: italic;">None</span>';
                         
-                        const branchConnector = document.createElement('div');
-                        branchConnector.className = 'connector';
-                        branch.appendChild(branchConnector);
+                        // Position popup next to the node
+                        const diagramDiv = document.getElementById('myDiagramDiv');
+                        const rect = diagramDiv.getBoundingClientRect();
+                        const nodeBounds = node.actualBounds;
+                        const viewPoint = myDiagram.transformDocToView(new go.Point(nodeBounds.right, nodeBounds.y));
                         
-                        const teamNode = createTeamNode(team, level + 1);
-                        branch.appendChild(teamNode);
-                        children.appendChild(branch);
-                    });
-
-                    personWrapper.appendChild(children);
-                    setTimeout(() => updateHorizontalLine(children), 10);
-                }
-
-                pairWrapper.appendChild(personWrapper);
-
-                // Dotted connector line between person and assistant
-                const assistantConnector = document.createElement('div');
-                assistantConnector.className = 'assistant-connector';
-                pairWrapper.appendChild(assistantConnector);
-
-                // Assistant wrapper (box next to main person)
-                const assistantWrapper = document.createElement('div');
-                assistantWrapper.className = 'assistant-wrapper';
-
-                const assistantEl = document.createElement('div');
-                assistantEl.className = 'person assistant';
-                assistantEl.setAttribute('data-level', level % 8);
-
-                const assistantNameEl = document.createElement('div');
-                assistantNameEl.className = 'name';
-                assistantNameEl.textContent = person.assistant.name;
-
-                const assistantRoleEl = document.createElement('div');
-                assistantRoleEl.className = 'role';
-                assistantRoleEl.textContent = person.assistant.role;
-
-                assistantEl.appendChild(assistantNameEl);
-                assistantEl.appendChild(assistantRoleEl);
-                assistantWrapper.appendChild(assistantEl);
-
-                pairWrapper.appendChild(assistantWrapper);
-                node.appendChild(pairWrapper);
-
-                return node;
-            }
-
-            const personEl = document.createElement('div');
-            personEl.className = 'person' + (isDotted ? ' staff' : '');
-            personEl.setAttribute('data-level', level % 8);
-
-            const nameEl = document.createElement('div');
-            nameEl.className = 'name';
-            nameEl.textContent = person.name;
-
-            const roleEl = document.createElement('div');
-            roleEl.className = 'role';
-            roleEl.textContent = person.role;
-
-            personEl.appendChild(nameEl);
-            personEl.appendChild(roleEl);
-            node.appendChild(personEl);
-
-            // Check for teams or staff (like Adam has)
-            const hasStaff = person.staff && person.staff.length > 0;
-            
-            if (hasTeams || hasStaff) {
-                const connector = document.createElement('div');
-                connector.className = 'connector';
-                node.appendChild(connector);
-
-                const children = document.createElement('div');
-                children.className = 'children';
-
-                // Add staff with dotted lines first
-                if (hasStaff) {
-                    person.staff.forEach(staffMember => {
-                        const branch = document.createElement('div');
-                        branch.className = 'child-branch';
-                        
-                        const branchConnector = document.createElement('div');
-                        branchConnector.className = 'connector dotted';
-                        branch.appendChild(branchConnector);
-                        
-                        const childNode = createPersonNode(staffMember, true, level + 1);
-                        branch.appendChild(childNode);
-                        children.appendChild(branch);
-                    });
-                }
-
-                // Add teams
-                if (hasTeams) {
-                    person.teams.forEach(team => {
-                        const branch = document.createElement('div');
-                        branch.className = 'child-branch';
-                        
-                        const branchConnector = document.createElement('div');
-                        branchConnector.className = 'connector';
-                        branch.appendChild(branchConnector);
-                        
-                        const teamNode = createTeamNode(team, level + 1);
-                        branch.appendChild(teamNode);
-                        children.appendChild(branch);
-                    });
-                }
-
-                node.appendChild(children);
-                setTimeout(() => updateHorizontalLine(children), 10);
-            }
-            // If has reports, always show them (no collapse)
-            else if (person.reports && person.reports.length > 0) {
-                const connector = document.createElement('div');
-                connector.className = 'connector';
-                node.appendChild(connector);
-
-                const children = document.createElement('div');
-                children.className = 'children';
-
-                person.reports.forEach(report => {
-                    const branch = document.createElement('div');
-                    branch.className = 'child-branch';
-                    
-                    const branchConnector = document.createElement('div');
-                    branchConnector.className = 'connector';
-                    branch.appendChild(branchConnector);
-                    
-                    const childNode = createPersonNode(report, false, level + 1);
-                    branch.appendChild(childNode);
-                    children.appendChild(branch);
-                });
-
-                node.appendChild(children);
-
-                // Update lines after render
-                setTimeout(() => updateHorizontalLine(children), 10);
-            }
-
-            return node;
-        }
-
-        function createTeamNode(team, level = 0) {
-            const node = document.createElement('div');
-            node.className = 'node';
-
-            const teamEl = document.createElement('div');
-            teamEl.className = 'team';
-
-            const nameEl = document.createElement('div');
-            nameEl.className = 'name';
-            nameEl.textContent = team.name;
-
-            const countEl = document.createElement('div');
-            countEl.className = 'count';
-            const memberCount = countTeamMembers(team);
-            countEl.textContent = `${memberCount} member${memberCount > 1 ? 's' : ''}`;
-
-            teamEl.appendChild(nameEl);
-            teamEl.appendChild(countEl);
-            node.appendChild(teamEl);
-
-            const connector = document.createElement('div');
-            connector.className = 'connector';
-            connector.style.display = 'none';
-            node.appendChild(connector);
-
-            const children = document.createElement('div');
-            children.className = 'children team-children collapsed';
-
-            if (team.head) {
-                const branch = document.createElement('div');
-                branch.className = 'child-branch';
-                
-                const branchConnector = document.createElement('div');
-                branchConnector.className = 'connector';
-                branch.appendChild(branchConnector);
-                
-                const childNode = createPersonNode(team.head, false, level + 1);
-                branch.appendChild(childNode);
-                children.appendChild(branch);
-            } else if (team.members) {
-                team.members.forEach(member => {
-                    const branch = document.createElement('div');
-                    branch.className = 'child-branch';
-                    
-                    const branchConnector = document.createElement('div');
-                    branchConnector.className = 'connector';
-                    // If member has dropLevel, extend connector to align with other members' reports
-                    if (member.dropLevel) {
-                        branchConnector.style.height = '200px';
+                        popup.style.left = (rect.left + viewPoint.x + 10) + 'px';
+                        popup.style.top = (rect.top + viewPoint.y) + 'px';
+                        popup.classList.add('visible');
                     }
-                    branch.appendChild(branchConnector);
-                    
-                    const childNode = createPersonNode(member, false, level + 1);
-                    branch.appendChild(childNode);
-                    children.appendChild(branch);
+                })
+                .add(
+                    new go.Panel(go.Panel.Auto, { name: 'BODY' })
+                        .add(
+                            new go.Shape('RoundedRectangle', {
+                                name: 'SHAPE',
+                                strokeWidth: 0,
+                                portId: '',
+                                spot1: go.Spot.TopLeft,
+                                spot2: go.Spot.BottomRight
+                            }).theme('fill', 'background'),
+                            new go.Panel(go.Panel.Table, { 
+                                margin: 0.5,
+                                defaultRowSeparatorStrokeWidth: 0.5
+                            })
+                            .theme('defaultRowSeparatorStroke', 'divider')
+                            .add(
+                                new go.Panel(go.Panel.Table, { 
+                                    padding: new go.Margin(14, 16, 14, 20),
+                                    minSize: new go.Size(180, NaN)
+                                })
+                                .add(
+                                    new go.Panel(go.Panel.Table, {
+                                        column: 0,
+                                        alignment: go.Spot.Left,
+                                        stretch: go.Stretch.Vertical,
+                                        defaultAlignment: go.Spot.Left
+                                    })
+                                    .add(
+                                        new go.Panel(go.Panel.Horizontal, { row: 0 })
+                                            .add(
+                                                new go.TextBlock({
+                                                    minSize: new go.Size(10, 14),
+                                                    margin: new go.Margin(0, 8, 0, 0)
+                                                })
+                                                .bind('text', 'name')
+                                                .theme('stroke', 'text')
+                                                .theme('font', 'name'),
+                                                new go.Panel(go.Panel.Auto, { visible: true })
+                                                    .bind('visible', 'dept', d => !!d)
+                                                    .add(
+                                                        new go.Shape('Capsule', { parameter1: 6, parameter2: 6 })
+                                                            .theme('fill', 'badge')
+                                                            .theme('stroke', 'badgeBorder'),
+                                                        new go.TextBlock({
+                                                            minSize: new go.Size(10, 12),
+                                                            margin: new go.Margin(2, 6)
+                                                        })
+                                                        .bind('text', 'dept')
+                                                        .theme('stroke', 'badgeText')
+                                                        .theme('font', 'badge')
+                                                    )
+                                            ),
+                                        new go.TextBlock({ row: 1, minSize: new go.Size(10, 14) })
+                                            .bind('text', 'title')
+                                            .theme('stroke', 'subtext')
+                                            .theme('font', 'normal')
+                                    )
+                                )
+                            )
+                        ),
+                    // Colored left stripe
+                    new go.Shape('RoundedLeftRectangle', {
+                        alignment: go.Spot.Left,
+                        alignmentFocus: go.Spot.Left,
+                        stretch: go.Stretch.Vertical,
+                        width: 5,
+                        strokeWidth: 0
+                    }).themeObject('fill', '', 'levels', findLevelColor),
+                    // Tree expander button
+                    go.GraphObject.build('TreeExpanderButton', {
+                        _treeExpandedFigure: 'LineUp',
+                        _treeCollapsedFigure: 'LineDown',
+                        alignment: go.Spot.Bottom,
+                        opacity: 0.7
+                    })
+                )
+                .theme('shadowColor', 'shadow')
+                .bind('text', 'name')
+                .bindTwoWay('isTreeExpanded');
+
+            // Link template
+            myDiagram.linkTemplate =
+                new go.Link({
+                    routing: go.Routing.Orthogonal,
+                    layerName: 'Background',
+                    corner: 5
+                })
+                .add(
+                    new go.Shape({ strokeWidth: 2 })
+                        .theme('stroke', 'link')
+                );
+
+            // Load the model
+            loadModel();
+            
+            // Default: expand all and center on root at 100%
+            myDiagram.addDiagramListener('InitialLayoutCompleted', () => {
+                myDiagram.nodes.each(n => n.isTreeExpanded = true);
+                myDiagram.scale = 1;
+                myDiagram.commandHandler.scrollToPart(myDiagram.findNodeForKey(1));
+            });
+
+            // Button handlers
+            document.getElementById('zoomToFit').addEventListener('click', () => {
+                myDiagram.commandHandler.zoomToFit();
+            });
+
+            document.getElementById('centerRoot').addEventListener('click', () => {
+                myDiagram.scale = 1;
+                myDiagram.commandHandler.scrollToPart(myDiagram.findNodeForKey(1));
+            });
+
+            document.getElementById('expandAll').addEventListener('click', () => {
+                myDiagram.startTransaction('expand all');
+                myDiagram.nodes.each(n => n.isTreeExpanded = true);
+                myDiagram.commitTransaction('expand all');
+            });
+
+            document.getElementById('collapseAll').addEventListener('click', () => {
+                myDiagram.startTransaction('collapse all');
+                myDiagram.nodes.each(n => {
+                    // Don't collapse the hidden spacer node
+                    if (n.findTreeLevel() > 0 && n.data.category !== 'hidden') {
+                        n.isTreeExpanded = false;
+                    }
                 });
-            }
-
-            node.appendChild(children);
-
-            teamEl.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const isExpanded = teamEl.classList.contains('expanded');
-                
-                if (isExpanded) {
-                    teamEl.classList.remove('expanded');
-                    connector.style.display = 'none';
-                    children.classList.add('collapsed');
-                    // Reset lines in collapsed section
-                    resetLines(children);
-                    setTimeout(updateAllLines, 50);
-                } else {
-                    teamEl.classList.add('expanded');
-                    connector.style.display = 'block';
-                    children.classList.remove('collapsed');
-                    
-                    // Update all lines after expansion
-                    setTimeout(updateAllLines, 50);
-                }
+                myDiagram.commitTransaction('collapse all');
             });
 
-            return node;
-        }
+            document.getElementById('theme').addEventListener('change', (e) => {
+                myDiagram.themeManager.currentTheme = e.target.value;
+            });
 
-        function createRootNode(data) {
-            const node = document.createElement('div');
-            node.className = 'node';
-
-            const personEl = document.createElement('div');
-            personEl.className = 'person';
-
-            const nameEl = document.createElement('div');
-            nameEl.className = 'name';
-            nameEl.textContent = data.name;
-
-            const roleEl = document.createElement('div');
-            roleEl.className = 'role';
-            roleEl.textContent = data.role;
-
-            personEl.appendChild(nameEl);
-            personEl.appendChild(roleEl);
-            node.appendChild(personEl);
-
-            const hasReports = data.reports && data.reports.length > 0;
-            const hasTeams = data.teams && data.teams.length > 0;
-
-            if (hasReports) {
-                const connector = document.createElement('div');
-                connector.className = 'connector';
-                node.appendChild(connector);
-
-                const children = document.createElement('div');
-                children.className = 'children';
-
-                // Add direct reports (Arnie, Adam, Nat)
-                data.reports.forEach(report => {
-                    const branch = document.createElement('div');
-                    branch.className = 'child-branch';
-                    
-                    const branchConnector = document.createElement('div');
-                    branchConnector.className = 'connector';
-                    branch.appendChild(branchConnector);
-                    
-                    const childNode = createPersonNode(report, false);
-                    branch.appendChild(childNode);
-                    children.appendChild(branch);
+            // Search functionality
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                if (!query) {
+                    myDiagram.clearHighlighteds();
+                    return;
+                }
+                
+                myDiagram.startTransaction('highlight');
+                myDiagram.clearHighlighteds();
+                myDiagram.nodes.each(n => {
+                    if (n.data.name && n.data.name.toLowerCase().includes(query)) {
+                        n.isHighlighted = true;
+                        // Expand parents to show the node
+                        let parent = n.findTreeParentNode();
+                        while (parent) {
+                            parent.isTreeExpanded = true;
+                            parent = parent.findTreeParentNode();
+                        }
+                    }
                 });
-
-                // Add Chaz's direct teams as branches with tall connectors to align with exec teams
-                if (hasTeams) {
-                    data.teams.forEach(team => {
-                        const branch = document.createElement('div');
-                        branch.className = 'child-branch';
-                        
-                        // Tall connector to push teams down to same level as exec teams
-                        const branchConnector = document.createElement('div');
-                        branchConnector.className = 'connector';
-                        branchConnector.style.height = '200px'; // Match height of person node + connector
-                        branch.appendChild(branchConnector);
-                        
-                        const teamNode = createTeamNode(team);
-                        branch.appendChild(teamNode);
-                        children.appendChild(branch);
-                    });
-                }
-
-                node.appendChild(children);
-                setTimeout(() => updateHorizontalLine(children), 100);
-            }
-
-            return node;
-        }
-
-        // Build the chart
-        const chart = document.getElementById('orgChart');
-        chart.appendChild(createRootNode(orgData));
-
-        // Set initial scale on load
-        setInitialScale();
-
-        // Update on resize
-        window.addEventListener('resize', () => {
-            updateAllLines();
-        });
-
-        // Search functionality
-        const searchInput = document.getElementById('searchInput');
-        const searchResults = document.getElementById('searchResults');
-        let allPeople = [];
-
-        // Collect all people from org data
-        function collectPeople(obj, path = []) {
-            if (obj.name && obj.role) {
-                allPeople.push({ name: obj.name, role: obj.role, path: [...path, obj.name] });
-            }
-            if (obj.assistant) collectPeople(obj.assistant, [...path, obj.name]);
-            if (obj.staff) obj.staff.forEach(s => collectPeople(s, [...path, obj.name]));
-            if (obj.reports) obj.reports.forEach(r => collectPeople(r, [...path, obj.name]));
-            if (obj.teams) obj.teams.forEach(t => {
-                if (t.head) collectPeople(t.head, [...path, obj.name, t.name]);
-                if (t.members) t.members.forEach(m => collectPeople(m, [...path, obj.name, t.name]));
-            });
-        }
-        collectPeople(orgData);
-
-        // Build hierarchy map for manager/reports lookup
-        const hierarchy = {};
-        
-        function buildHierarchy(obj, manager = null) {
-            if (obj.name && obj.role) {
-                hierarchy[obj.name] = {
-                    name: obj.name,
-                    role: obj.role,
-                    manager: manager,
-                    reports: []
-                };
+                myDiagram.commitTransaction('highlight');
                 
-                // Collect direct reports
-                if (obj.reports) {
-                    obj.reports.forEach(r => {
-                        hierarchy[obj.name].reports.push({ name: r.name, role: r.role });
-                    });
-                }
-                if (obj.staff) {
-                    obj.staff.forEach(s => {
-                        hierarchy[obj.name].reports.push({ name: s.name, role: s.role });
-                    });
-                }
-                if (obj.assistant) {
-                    hierarchy[obj.name].reports.push({ name: obj.assistant.name, role: obj.assistant.role });
-                }
-                // Include team heads and members as direct reports
-                if (obj.teams) {
-                    obj.teams.forEach(t => {
-                        if (t.head) {
-                            hierarchy[obj.name].reports.push({ name: t.head.name, role: t.head.role });
-                        }
-                        if (t.members) {
-                            t.members.forEach(m => {
-                                hierarchy[obj.name].reports.push({ name: m.name, role: m.role });
-                            });
-                        }
-                    });
-                }
-            }
-            
-            const currentPerson = obj.name || manager;
-            
-            if (obj.assistant) buildHierarchy(obj.assistant, obj.name);
-            if (obj.staff) obj.staff.forEach(s => buildHierarchy(s, obj.name));
-            if (obj.reports) obj.reports.forEach(r => buildHierarchy(r, obj.name));
-            if (obj.teams) obj.teams.forEach(t => {
-                if (t.head) buildHierarchy(t.head, obj.name);
-                if (t.members) t.members.forEach(m => buildHierarchy(m, obj.name));
+                // Scroll to first match
+                const first = myDiagram.nodes.filter(n => n.isHighlighted).first();
+                if (first) myDiagram.commandHandler.scrollToPart(first);
             });
         }
-        buildHierarchy(orgData);
 
-        // Person modal functionality
-        const personModal = document.getElementById('personModal');
-        const modalClose = document.getElementById('modalClose');
-        const modalName = document.getElementById('modalName');
-        const modalRole = document.getElementById('modalRole');
-        const modalManager = document.getElementById('modalManager');
-        const modalReports = document.getElementById('modalReports');
-
-        function showPersonModal(name) {
-            const person = hierarchy[name];
-            if (!person) return;
-
-            modalName.textContent = person.name;
-            modalRole.textContent = person.role;
-            
-            if (person.manager) {
-                const mgr = hierarchy[person.manager];
-                modalManager.innerHTML = `<span>${person.manager}</span>${mgr ? ` <span style="color: var(--slate-400)">· ${mgr.role}</span>` : ''}`;
-            } else {
-                modalManager.innerHTML = '<span class="person-modal-none">None</span>';
-            }
-
-            if (person.reports.length > 0) {
-                modalReports.innerHTML = `<ul class="person-modal-list">${person.reports.map(r => 
-                    `<li>${r.name} <span style="color: var(--slate-400)">· ${r.role}</span></li>`
-                ).join('')}</ul>`;
-            } else {
-                modalReports.innerHTML = '<span class="person-modal-none">None</span>';
-            }
-
-            personModal.classList.add('visible');
-        }
-
-        function hidePersonModal() {
-            personModal.classList.remove('visible');
-        }
-
-        modalClose.addEventListener('click', hidePersonModal);
-        personModal.addEventListener('click', (e) => {
-            if (e.target === personModal) hidePersonModal();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') hidePersonModal();
-        });
-
-        // Add click handlers to all person nodes
-        document.addEventListener('click', (e) => {
-            const personEl = e.target.closest('.person:not(.assistant)');
-            if (personEl && !e.target.closest('.team')) {
-                const nameEl = personEl.querySelector('.name');
-                if (nameEl) {
-                    showPersonModal(nameEl.textContent);
-                }
-            }
-        });
-
-        searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase().trim();
-            
-            if (query.length === 0) {
-                searchResults.classList.remove('active');
-                return;
-            }
-
-            const matches = allPeople.filter(p => 
-                p.name.toLowerCase().includes(query)
-            ).slice(0, 8);
-
-            if (matches.length === 0) {
-                searchResults.classList.remove('active');
-                return;
-            }
-
-            searchResults.innerHTML = matches.map(p => `
-                <div class="search-result" data-name="${p.name}">
-                    <div class="result-name">${p.name}</div>
-                    <div class="result-role">${p.role}</div>
-                </div>
-            `).join('');
-            searchResults.classList.add('active');
-        });
-
-        searchResults.addEventListener('click', (e) => {
-            const result = e.target.closest('.search-result');
-            if (!result) return;
-            
-            const name = result.dataset.name;
-            searchInput.value = name;
-            searchResults.classList.remove('active');
-            highlightAndScrollTo(name);
-        });
-
-        searchInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const firstResult = searchResults.querySelector('.search-result');
-                if (firstResult) {
-                    const name = firstResult.dataset.name;
-                    searchInput.value = name;
-                    searchResults.classList.remove('active');
-                    highlightAndScrollTo(name);
-                }
-            } else if (e.key === 'Escape') {
-                searchResults.classList.remove('active');
-                searchInput.blur();
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-container')) {
-                searchResults.classList.remove('active');
-            }
-        });
-
-        function highlightAndScrollTo(name) {
-            // Remove previous highlight
-            document.querySelectorAll('.person.highlighted').forEach(el => {
-                el.classList.remove('highlighted');
-            });
-
-            // Find and expand path to person
-            const personNodes = document.querySelectorAll('.person');
-            let targetNode = null;
-
-            personNodes.forEach(node => {
-                const nameEl = node.querySelector('.name');
-                if (nameEl && nameEl.textContent === name) {
-                    targetNode = node;
-                }
-            });
-
-            if (!targetNode) {
-                // Person might be in collapsed team - expand all first
-                expandAll();
+        function loadModel() {
+            // Model ML org data in GoJS TreeModel format
+            const nodeDataArray = [
+                // Level 0: CEO
+                { key: 1, name: 'Chaz', title: 'CEO', dept: 'Executive' },
                 
-                setTimeout(() => {
-                    personNodes.forEach(node => {
-                        const nameEl = node.querySelector('.name');
-                        if (nameEl && nameEl.textContent === name) {
-                            targetNode = node;
-                        }
-                    });
-                    if (targetNode) doHighlight(targetNode);
-                }, 100);
-            } else {
-                // Check if any parent is collapsed
-                let parent = targetNode.closest('.team-children.collapsed');
-                if (parent) {
-                    expandAll();
-                    setTimeout(() => doHighlight(targetNode), 100);
-                } else {
-                    doHighlight(targetNode);
+                // Level 1: Chiefs (direct reports to CEO)
+                { key: 2, name: 'Arnie', title: 'CTO', dept: 'Technology', parent: 1 },
+                { key: 3, name: 'Adam', title: 'COO', dept: 'Operations', parent: 1 },
+                { key: 100, name: 'Nat', title: 'Chief of Staff', dept: 'Executive', parent: 1 },
+                
+                // Invisible spacer node for functional teams under Chaz (but visually below Chiefs)
+                { key: 999, name: '', title: '', dept: '', parent: 1, category: 'hidden', isTreeExpanded: true },
+                
+                // Nat's Ops team
+                { key: 101, name: 'John', title: 'Relationship Manager', dept: 'Ops', parent: 100 },
+                { key: 102, name: 'Lucy', title: 'EA / UK Office Manager', dept: 'Ops', parent: 100 },
+                { key: 103, name: 'Grace', title: 'Chaz PA', dept: 'Ops', parent: 100 },
+                
+                // Nat's Finance team
+                { key: 104, name: 'Harun', title: 'Finance', dept: 'Finance', parent: 100 },
+                
+                // Strategy & BI (under Chaz via spacer)
+                { key: 4, name: 'Ahmed', title: 'Special Projects', dept: 'Strategy', parent: 999 },
+                { key: 5, name: 'Kesh', title: 'Data', dept: 'Strategy', parent: 4 },
+                
+                // Sales (under Chaz via spacer)
+                { key: 6, name: 'Jonny', title: 'EMEA IB', dept: 'Sales', parent: 999 },
+                { key: 7, name: 'Philip', title: 'EMEA PE', dept: 'Sales', parent: 6 },
+                { key: 8, name: 'Eli', title: 'US IB', dept: 'Sales', parent: 6 },
+                { key: 9, name: 'Steven', title: 'Sales', dept: 'Sales', parent: 6 },
+                { key: 10, name: 'Rags', title: 'Global Consulting', dept: 'Sales', parent: 999 },
+                
+                // Marketing (under Chaz via spacer)
+                { key: 11, name: 'Sid', title: 'Marketing', dept: 'Marketing', parent: 999 },
+                
+                // Legal (under Chaz via spacer)
+                { key: 12, name: 'Eli B', title: 'Legal', dept: 'Legal', parent: 999 },
+                
+                // Adam's assistant
+                { key: 13, name: 'Jill', title: 'EA / NY Office Manager', dept: 'Operations', parent: 3 },
+                
+                // Design (under Arnie)
+                { key: 20, name: 'Mayowa', title: 'Designer', dept: 'Design', parent: 2 },
+                { key: 21, name: 'Musleh', title: 'Designer', dept: 'Design', parent: 2 },
+                
+                // Product (under Arnie)
+                { key: 22, name: 'Alex', title: 'Product', dept: 'Product', parent: 2 },
+                { key: 23, name: 'Marta', title: 'Product', dept: 'Product', parent: 2 },
+                { key: 24, name: 'Joseph', title: 'Product', dept: 'Product', parent: 2 },
+                { key: 25, name: 'Miquel', title: 'Product', dept: 'Product', parent: 2 },
+                
+                // Engineering (under Arnie)
+                { key: 30, name: 'Mark', title: 'Head of Engineering', dept: 'Engineering', parent: 2 },
+                { key: 31, name: 'James', title: 'Head of AI', dept: 'Engineering', parent: 2 },
+                { key: 32, name: 'Roman', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 33, name: 'Chester', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 34, name: 'Imdad', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 35, name: 'Ahmet', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 36, name: 'Mohit', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 37, name: 'Dominic', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 38, name: 'Simone', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 39, name: 'Ignacio', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 40, name: 'Ed', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 41, name: 'Maurits', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 42, name: 'Sergey', title: 'Engineer', dept: 'Engineering', parent: 30 },
+                { key: 43, name: 'Danish', title: 'Engineer', dept: 'Engineering', parent: 32 },
+                { key: 44, name: 'Manideep', title: 'Engineer', dept: 'Engineering', parent: 32 },
+                { key: 45, name: 'Luke', title: 'Engineer', dept: 'Engineering', parent: 32 },
+                { key: 46, name: 'Ashish', title: 'Engineer', dept: 'Engineering', parent: 32 },
+                { key: 47, name: 'Darshan', title: 'Engineer', dept: 'Engineering', parent: 33 },
+                
+                // Engagement (under Adam)
+                { key: 50, name: 'Ben', title: 'US IB Lead', dept: 'Engagement', parent: 3 },
+                { key: 51, name: 'Laxmi', title: 'EMEA IB Lead', dept: 'Engagement', parent: 3 },
+                { key: 52, name: 'Milan', title: 'EMEA Consulting Lead', dept: 'Engagement', parent: 3 },
+                { key: 53, name: 'Jessie', title: 'Engagement Director', dept: 'Engagement', parent: 3 },
+                
+                // Ben's reports
+                { key: 54, name: 'Greg', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
+                { key: 55, name: 'Cam', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
+                { key: 56, name: 'Atul', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
+                { key: 57, name: 'Anna', title: 'Engagement Manager', dept: 'Engagement', parent: 50 },
+                
+                // Laxmi's reports
+                { key: 58, name: 'James E', title: 'Engagement Manager', dept: 'Engagement', parent: 51 },
+                { key: 59, name: 'Ian', title: 'Engagement Manager', dept: 'Engagement', parent: 51 },
+                
+                // Milan's reports
+                { key: 60, name: 'Brenda', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
+                { key: 61, name: 'Diogo', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
+                { key: 62, name: 'Tej', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
+                { key: 63, name: 'Vaqar', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
+                { key: 64, name: 'Olly', title: 'Engagement Manager', dept: 'Engagement', parent: 52 },
+                
+                // Jessie's reports
+                { key: 65, name: 'Helen', title: 'Engagement Manager', dept: 'Engagement', parent: 53 },
+                
+                // Alpha Team (under Ahmed in Strategy)
+                { key: 71, name: 'Preeti', title: 'Vector', dept: 'Alpha', parent: 4 },
+                { key: 72, name: 'Adarsh', title: 'Vector', dept: 'Alpha', parent: 4 },
+                { key: 73, name: 'Sashwat', title: 'Vector', dept: 'Alpha', parent: 4 },
+                { key: 74, name: 'Abhishek', title: 'Vector', dept: 'Alpha', parent: 4 },
+                { key: 75, name: 'Shash', title: 'Vector', dept: 'Alpha', parent: 4 },
+                { key: 76, name: 'Suman', title: 'Vector', dept: 'Alpha', parent: 4 },
+                
+                // Preeti's reports
+                { key: 77, name: 'Vishal', title: 'Alpha', dept: 'Alpha', parent: 71 },
+                { key: 78, name: 'Naveen', title: 'Alpha', dept: 'Alpha', parent: 71 },
+                { key: 79, name: 'Anshuman', title: 'Alpha', dept: 'Alpha', parent: 71 },
+                
+                // Adarsh's reports
+                { key: 80, name: 'Shubi', title: 'Alpha', dept: 'Alpha', parent: 72 },
+                { key: 81, name: 'Naman', title: 'Alpha', dept: 'Alpha', parent: 72 },
+                
+                // Sashwat's reports
+                { key: 82, name: 'Ritish', title: 'Alpha', dept: 'Alpha', parent: 73 },
+                { key: 83, name: 'Ayush', title: 'Alpha', dept: 'Alpha', parent: 73 },
+                { key: 84, name: 'Nikhil', title: 'Alpha', dept: 'Alpha', parent: 73 },
+                
+                // Abhishek's reports
+                { key: 85, name: 'Ajaykumar', title: 'Alpha', dept: 'Alpha', parent: 74 },
+                { key: 86, name: 'Parul', title: 'Alpha', dept: 'Alpha', parent: 74 },
+                { key: 87, name: 'Ushma', title: 'Alpha', dept: 'Alpha', parent: 74 },
+                
+                // Shash's reports
+                { key: 88, name: 'Soumya', title: 'Alpha', dept: 'Alpha', parent: 75 },
+                { key: 89, name: 'Kumar', title: 'Alpha', dept: 'Alpha', parent: 75 },
+                { key: 90, name: 'Yugant', title: 'Alpha', dept: 'Alpha', parent: 75 },
+                
+                // Suman's reports
+                { key: 91, name: 'Abhishek M', title: 'Alpha', dept: 'Alpha', parent: 76 },
+                { key: 92, name: 'Sagar', title: 'Alpha', dept: 'Alpha', parent: 76 },
+                { key: 93, name: 'Gitesh', title: 'Alpha', dept: 'Alpha', parent: 76 }
+            ];
+
+            myDiagram.model = new go.TreeModel(nodeDataArray);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const popup = document.getElementById('infoPopup');
+            
+            // Close popup when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!popup.contains(e.target)) {
+                    popup.classList.remove('visible');
                 }
-            }
-        }
-
-        function doHighlight(targetNode) {
-            targetNode.classList.add('highlighted');
-
-            // Pan to center the node
-            const rect = targetNode.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
+            });
             
-            const nodeX = (rect.left + rect.width / 2 - containerRect.left - panX) / scale;
-            const nodeY = (rect.top + rect.height / 2 - containerRect.top - panY) / scale;
-            
-            const centerX = containerRect.width / 2;
-            const centerY = containerRect.height / 2;
-            
-            panX = centerX - nodeX * scale;
-            panY = centerY - nodeY * scale;
-            
-            updateTransform();
-        }
+            setTimeout(() => init(), 100);
+        });
     </script>
 </body>
 </html>
