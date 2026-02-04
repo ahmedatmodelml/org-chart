@@ -689,7 +689,7 @@
                                 { name: 'Steven', role: 'Sales', reports: [] }
                             ]
                         },
-                        { name: 'Rags', role: 'EMEA/APAC Consulting', reports: [] }
+                        { name: 'Rags', role: 'EMEA/APAC Consulting', reports: [], dropLevel: true }
                     ]
                 },
                 {
@@ -1247,6 +1247,10 @@
                     
                     const branchConnector = document.createElement('div');
                     branchConnector.className = 'connector';
+                    // If member has dropLevel, extend connector to align with other members' reports
+                    if (member.dropLevel) {
+                        branchConnector.style.height = '88px';
+                    }
                     branch.appendChild(branchConnector);
                     
                     const childNode = createPersonNode(member);
