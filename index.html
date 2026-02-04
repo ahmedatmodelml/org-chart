@@ -356,7 +356,7 @@
         .person-with-assistant {
             display: flex;
             align-items: flex-start;
-            gap: 16px;
+            gap: 0;
         }
 
         .person-with-assistant > .person-wrapper {
@@ -367,15 +367,14 @@
 
         .person.assistant {
             border-style: dashed;
-            border-color: var(--slate-300);
+            border-color: var(--slate-400);
         }
 
         .assistant-connector {
-            width: 16px;
-            height: 1px;
-            border-top: 1px dashed var(--slate-400);
-            align-self: center;
-            margin-top: 14px;
+            width: 24px;
+            border-top: 2px dashed var(--slate-400);
+            margin-top: 24px;
+            flex-shrink: 0;
         }
 
         .assistant-wrapper {
